@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTEC – Universidad Tecnológica de Colombia</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Sitio oficial de la UTEC – Universidad Tecnológica de Colombia. Ofrecemos carreras de ingeniería y tecnología con alta calidad académica. ¡Conoce nuestros programas y forma parte de nuestra comunidad!">
+    <meta name="keywords" content="UTEC, Universidad, Colombia, Ingeniería, Tecnología, Educación Superior, Carreras Universitarias">
+    <meta name="author" content="UTEC">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://utec.edu.co/">
+    <meta property="og:title" content="UTEC – Universidad Tecnológica de Colombia">
+    <meta property="og:description" content="Formando líderes en ingeniería y tecnología. Conoce nuestros programas, procesos de admisión y más.">
+    <meta property="og:image" content="https://placehold.co/1200x630/4FB0C6/ffffff?text=UTEC">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://utec.edu.co/">
+    <meta property="twitter:title" content="UTEC – Universidad Tecnológica de Colombia">
+    <meta property="twitter:description" content="Formando líderes en ingeniería y tecnología. Conoce nuestros programas, procesos de admisión y más.">
+    <meta property="twitter:image" content="https://placehold.co/1200x630/4FB0C6/ffffff?text=UTEC">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Libraries for QR and PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #E8F6F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #97D8E1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4FB0C6;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        //============= UTILITY FUNCTIONS =============//
+        
+        async function digestMessage(string) {
+            const msgUint8 = new TextEncoder().encode(string);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        //============= STATIC DATA =============//
+        
+        const carrerasData = {
+          "ingenierias": [
+            {
+              "slug": "ingenieria-industrial",
+              "nombre": "Ingeniería Industrial",
+              "duracion_semestres": 10,
+              "modalidad": "Presencial / Virtual",
+              "descripcion": "Formación integral para diseñar, optimizar y gestionar sistemas productivos de bienes y servicios, aplicando conocimientos científicos y tecnológicos para mejorar la eficiencia, productividad y calidad.",
+              "imageUrl": "https://placehold.co/600x400/4FB0C6/ffffff?text=Ingenieria+Industrial",
+              "pensum": [
+                { "semestre": 1, "creditos": 16, "asignaturas": [{"nombre": "Cálculo I", "creditos": 3}, {"nombre": "Álgebra y Trigonometría", "creditos": 3}, {"nombre": "Introducción a la Ingeniería Industrial", "creditos": 2}, {"nombre": "Programación I", "creditos": 3}, {"nombre": "Comunicación Académica", "creditos": 2}, {"nombre": "Fundamentos de Química", "creditos": 3}]},
+                { "semestre": 2, "creditos": 17, "asignaturas": [{"nombre": "Cálculo II", "creditos": 3}, {"nombre": "Física I (Mecánica)", "creditos": 3}, {"nombre": "Dibujo Asistido por Computador (CAD)", "creditos": 2}, {"nombre": "Probabilidad y Estadística", "creditos": 3}, {"nombre": "Materiales y Procesos", "creditos": 3}, {"nombre": "Constitución y Ética", "creditos": 3}]},
+                { "semestre": 3, "creditos": 16, "asignaturas": [{"nombre": "Ecuaciones Diferenciales", "creditos": 3}, {"nombre": "Física II (Electromagnetismo)", "creditos": 3}, {"nombre": "Estadística Inferencial", "creditos": 3}, {"nombre": "Contabilidad de Costos", "creditos": 3}, {"nombre": "Economía General", "creditos": 2}, {"nombre": "Metodología de la Investigación", "creditos": 2}]},
+                { "semestre": 4, "creditos": 16, "asignaturas": [{"nombre": "Termodinámica", "creditos": 3}, {"nombre": "Mecánica de Sólidos (Estática)", "creditos": 3}, {"nombre": "Investigación de Operaciones I", "creditos": 3}, {"nombre": "Ingeniería de Métodos y Tiempos", "creditos": 3}, {"nombre": "Legislación Laboral", "creditos": 2}, {"nombre": "Electiva I (Humanidades)", "creditos": 2}]},
+                { "semestre": 5, "creditos": 17, "asignaturas": [{"nombre": "Mecánica de Fluidos", "creditos": 3}, {"nombre": "Diseño de Experimentos", "creditos": 3}, {"nombre": "Investigación de Operaciones II", "creditos": 3}, {"nombre": "Gestión de la Producción I", "creditos": 3}, {"nombre": "Ingeniería Económica", "creditos": 3}, {"nombre": "Sistemas de Información Gerencial", "creditos": 2}]},
+                { "semestre": 6, "creditos": 16, "asignaturas": [{"nombre": "Control Estadístico de Calidad", "creditos": 3}, {"nombre": "Simulación de Sistemas", "creditos": 3}, {"nombre": "Gestión de la Producción II", "creditos": 3}, {"nombre": "Logística y Cadena de Suministro", "creditos": 3}, {"nombre": "Mercadotecnia", "creditos": 2}, {"nombre": "Seguridad y Salud en el Trabajo", "creditos": 2}]},
+                { "semestre": 7, "creditos": 15, "asignaturas": [{"nombre": "Sistemas de Gestión de Calidad (ISO 9001)", "creditos": 3}, {"nombre": "Automatización Industrial", "creditos": 3}, {"nombre": "Diseño de Plantas Industriales", "creditos": 3}, {"nombre": "Formulación y Evaluación de Proyectos", "creditos": 3}, {"nombre": "Gestión del Talento Humano", "creditos": 3}]},
+                { "semestre": 8, "creditos": 15, "asignaturas": [{"nombre": "Gestión Ambiental (ISO 14001)", "creditos": 3}, {"nombre": "Ingeniería Financiera", "creditos": 3}, {"nombre": "Gerencia Estratégica", "creditos": 3}, {"nombre": "Emprendimiento e Innovación", "creditos": 3}, {"nombre": "Electiva II (Profesional)", "creditos": 3}]},
+                { "semestre": 9, "creditos": 12, "asignaturas": [{"nombre": "Práctica Profesional", "creditos": 9}, {"nombre": "Seminario de Grado I", "creditos": 3}]},
+                { "semestre": 10, "creditos": 6, "asignaturas": [{"nombre": "Trabajo de Grado", "creditos": 6}]}
+              ],
+              "perfil_egreso": "Profesional capaz de liderar, gestionar y optimizar procesos de producción y servicios, con un enfoque en la calidad, la productividad, la sostenibilidad y la mejora continua, adaptándose a los desafíos de un entorno globalizado.",
+              "campo_laboral": "Jefe de planta, analista de procesos, gerente de logística y operaciones, consultor de calidad, especialista en supply chain, director de proyectos, emprendedor industrial."
+            },
+            {
+              "slug": "ingenieria-de-sistemas",
+              "nombre": "Ingeniería de Sistemas",
+              "duracion_semestres": 10,
+              "modalidad": "Presencial",
+              "descripcion": "Diseña, desarrolla e implementa soluciones de software y gestiona infraestructuras tecnológicas para resolver problemas complejos en diversas organizaciones.",
+              "imageUrl": "https://placehold.co/600x400/4FB0C6/ffffff?text=Ingenieria+de+Sistemas",
+              "pensum": [
+                 { "semestre": 1, "creditos": 16, "asignaturas": [{"nombre":"Cálculo I","creditos":3},{"nombre":"Lógica y Algoritmia","creditos":3},{"nombre":"Introducción a la Ing. de Sistemas","creditos":2},{"nombre":"Programación Orientada a Objetos I","creditos":3},{"nombre":"Comunicación Académica","creditos":2},{"nombre":"Fundamentos de Hardware","creditos":3}]},
+                 { "semestre": 2, "creditos": 17, "asignaturas": [{"nombre":"Cálculo II","creditos":3},{"nombre":"Física I (Mecánica)","creditos":3},{"nombre":"Estructuras de Datos","creditos":3},{"nombre":"Programación Orientada a Objetos II","creditos":3},{"nombre":"Bases de Datos I","creditos":3},{"nombre":"Constitución y Ética","creditos":2}]},
+                 { "semestre": 3, "creditos": 16, "asignaturas": [{"nombre":"Ecuaciones Diferenciales","creditos":3},{"nombre":"Probabilidad y Estadística","creditos":3},{"nombre":"Teoría de Grafos y Complejidad","creditos":3},{"nombre":"Bases de Datos II","creditos":3},{"nombre":"Arquitectura de Computadores","creditos":2},{"nombre":"Sistemas Operativos","creditos":2}]},
+                 { "semestre": 4, "creditos": 16, "asignaturas": [{"nombre":"Matemáticas Discretas II","creditos":3},{"nombre":"Redes de Computadores I","creditos":3},{"nombre":"Ingeniería de Software I","creditos":3},{"nombre":"Análisis Numérico","creditos":3},{"nombre":"Desarrollo Web Frontend","creditos":2},{"nombre":"Electiva I (Humanidades)","creditos":2}]},
+                 { "semestre": 5, "creditos": 17, "asignaturas": [{"nombre":"Teoría de la Computación","creditos":3},{"nombre":"Redes de Computadores II","creditos":3},{"nombre":"Ingeniería de Software II (Patrones)","creditos":3},{"nombre":"Desarrollo Web Backend","creditos":3},{"nombre":"Ingeniería Económica","creditos":3},{"nombre":"Legislación Informática","creditos":2}]},
+                 { "semestre": 6, "creditos": 16, "asignaturas": [{"nombre":"Inteligencia Artificial","creditos":3},{"nombre":"Seguridad Informática","creditos":3},{"nombre":"Arquitectura de Software","creditos":3},{"nombre":"Desarrollo de Aplicaciones Móviles","creditos":3},{"nombre":"Sistemas de Información Gerencial","creditos":2},{"nombre":"Metodología de la Investigación","creditos":2}]},
+                 { "semestre": 7, "creditos": 15, "asignaturas": [{"nombre":"Aprendizaje Automático (Machine Learning)","creditos":3},{"nombre":"Criptografía","creditos":3},{"nombre":"Calidad y Pruebas de Software (QA)","creditos":3},{"nombre":"Computación en la Nube (Cloud)","creditos":3},{"nombre":"Formulación de Proyectos","creditos":3}]},
+                 { "semestre": 8, "creditos": 15, "asignaturas": [{"nombre":"Sistemas Distribuidos","creditos":3},{"nombre":"Auditoría de Sistemas","creditos":3},{"nombre":"Gestión de Proyectos de TI","creditos":3},{"nombre":"Emprendimiento e Innovación","creditos":3},{"nombre":"Electiva II (Profesional)","creditos":3}]},
+                 { "semestre": 9, "creditos": 12, "asignaturas": [{"nombre":"Práctica Profesional","creditos":9},{"nombre":"Seminario de Grado I","creditos":3}]},
+                 { "semestre": 10, "creditos": 6, "asignaturas": [{"nombre":"Trabajo de Grado","creditos":6}]}
+              ],
+              "perfil_egreso": "Profesional con la capacidad de analizar, diseñar, construir y mantener soluciones de software robustas y escalables, gestionando la infraestructura tecnológica y la seguridad de la información.",
+              "campo_laboral": "Desarrollador de software, arquitecto de software, administrador de bases de datos (DBA), especialista en ciberseguridad, ingeniero DevOps, consultor de TI."
+            },
+            {
+              "slug": "ingenieria-civil",
+              "nombre": "Ingeniería Civil",
+              "duracion_semestres": 10,
+              "modalidad": "Presencial",
+              "descripcion": "Planifica, diseña, construye y mantiene obras de infraestructura como edificios, puentes, carreteras y sistemas de agua, contribuyendo al desarrollo de la sociedad.",
+              "imageUrl": "https://placehold.co/600x400/4FB0C6/ffffff?text=Ingenieria+Civil",
+              "pensum": [
+                 { "semestre": 1, "creditos": 16, "asignaturas": [{"nombre":"Cálculo I","creditos":3},{"nombre":"Álgebra Lineal","creditos":3},{"nombre":"Introducción a la Ing. Civil","creditos":2},{"nombre":"Dibujo Técnico","creditos":3},{"nombre":"Comunicación Académica","creditos":2},{"nombre":"Química General","creditos":3}]},
+                 { "semestre": 2, "creditos": 17, "asignaturas": [{"nombre":"Cálculo II","creditos":3},{"nombre":"Física I (Mecánica)","creditos":3},{"nombre":"Topografía I","creditos":3},{"nombre":"Geometría Descriptiva","creditos":3},{"nombre":"Materiales de Construcción","creditos":3},{"nombre":"Constitución y Ética","creditos":2}]},
+                 { "semestre": 3, "creditos": 16, "asignaturas": [{"nombre":"Ecuaciones Diferenciales","creditos":3},{"nombre":"Física II (Electromagnetismo)","creditos":3},{"nombre":"Estática","creditos":3},{"nombre":"Topografía II","creditos":3},{"nombre":"Geología para Ingenieros","creditos":2},{"nombre":"Probabilidad y Estadística","creditos":2}]},
+                 { "semestre": 4, "creditos": 16, "asignaturas": [{"nombre":"Mecánica de Sólidos I","creditos":3},{"nombre":"Dinámica","creditos":3},{"nombre":"Mecánica de Fluidos","creditos":3},{"nombre":"Análisis Numérico","creditos":3},{"nombre":"Software para Ingeniería Civil (CAD/BIM)","creditos":2},{"nombre":"Economía","creditos":2}]},
+                 { "semestre": 5, "creditos": 17, "asignaturas": [{"nombre":"Mecánica de Sólidos II","creditos":3},{"nombre":"Hidráulica de Canales","creditos":3},{"nombre":"Análisis Estructural I","creditos":3},{"nombre":"Mecánica de Suelos I","creditos":3},{"nombre":"Ingeniería Económica","creditos":3},{"nombre":"Metodología de la Investigación","creditos":2}]},
+                 { "semestre": 6, "creditos": 16, "asignaturas": [{"nombre":"Concreto Reforzado I","creditos":3},{"nombre":"Análisis Estructural II","creditos":3},{"nombre":"Mecánica de Suelos II","creditos":3},{"nombre":"Hidrología","creditos":3},{"nombre":"Ingeniería de Tránsito","creditos":2},{"nombre":"Legislación de la Construcción","creditos":2}]},
+                 { "semestre": 7, "creditos": 15, "asignaturas": [{"nombre":"Concreto Reforzado II","creditos":3},{"nombre":"Diseño de Estructuras Metálicas","creditos":3},{"nombre":"Cimentaciones","creditos":3},{"nombre":"Acueductos y Alcantarillados","creditos":3},{"nombre":"Diseño de Vías","creditos":3}]},
+                 { "semestre": 8, "creditos": 15, "asignaturas": [{"nombre":"Ingeniería Sísmica","creditos":3},{"nombre":"Diseño de Puentes","creditos":3},{"nombre":"Pavimentos","creditos":3},{"nombre":"Gestión de la Construcción","creditos":3},{"nombre":"Formulación de Proyectos","creditos":3}]},
+                 { "semestre": 9, "creditos": 12, "asignaturas": [{"nombre":"Práctica Profesional","creditos":9},{"nombre":"Seminario de Grado I","creditos":3}]},
+                 { "semestre": 10, "creditos": 6, "asignaturas": [{"nombre":"Trabajo de Grado","creditos":6}]}
+               ],
+              "perfil_egreso": "Profesional con sólidos conocimientos para concebir, diseñar y supervisar proyectos de infraestructura, garantizando la seguridad, sostenibilidad y eficiencia de las obras civiles.",
+              "campo_laboral": "Ingeniero de diseño estructural, residente de obra, especialista en geotecnia, ingeniero de vías y transporte, consultor de proyectos de infraestructura, gerente de construcción."
+            },
+            {
+              "slug": "ingenieria-electronica",
+              "nombre": "Ingeniería Electrónica",
+              "duracion_semestres": 10,
+              "modalidad": "Presencial / Virtual",
+              "descripcion": "Se enfoca en el diseño y desarrollo de circuitos, dispositivos y sistemas electrónicos para aplicaciones en control, telecomunicaciones y automatización.",
+              "imageUrl": "https://placehold.co/600x400/4FB0C6/ffffff?text=Ingenieria+Electronica",
+              "pensum": [
+                 { "semestre": 1, "creditos": 16, "asignaturas": [{"nombre":"Cálculo I","creditos":3},{"nombre":"Álgebra Lineal","creditos":3},{"nombre":"Introducción a la Ing. Electrónica","creditos":2},{"nombre":"Lógica y Algoritmia","creditos":3},{"nombre":"Comunicación Académica","creditos":2},{"nombre":"Química General","creditos":3}]},
+                 { "semestre": 2, "creditos": 17, "asignaturas": [{"nombre":"Cálculo II","creditos":3},{"nombre":"Física I (Mecánica)","creditos":3},{"nombre":"Circuitos Eléctricos I","creditos":3},{"nombre":"Programación de Computadores","creditos":3},{"nombre":"Materiales Eléctricos","creditos":3},{"nombre":"Constitución y Ética","creditos":2}]},
+                 { "semestre": 3, "creditos": 16, "asignaturas": [{"nombre":"Ecuaciones Diferenciales","creditos":3},{"nombre":"Física II (Electromagnetismo)","creditos":3},{"nombre":"Circuitos Eléctricos II","creditos":3},{"nombre":"Electrónica Analógica I","creditos":3},{"nombre":"Probabilidad y Estadística","creditos":2},{"nombre":"Dibujo Asistido (CAD)","creditos":2}]},
+                 { "semestre": 4, "creditos": 16, "asignaturas": [{"nombre":"Cálculo Vectorial","creditos":3},{"nombre":"Física III (Ondas y Óptica)","creditos":3},{"nombre":"Electrónica Analógica II","creditos":3},{"nombre":"Sistemas Digitales I","creditos":3},{"nombre":"Señales y Sistemas","creditos":2},{"nombre":"Análisis Numérico","creditos":2}]},
+                 { "semestre": 5, "creditos": 17, "asignaturas": [{"nombre":"Campos Electromagnéticos","creditos":3},{"nombre":"Electrónica de Potencia","creditos":3},{"nombre":"Sistemas Digitales II (VHDL)","creditos":3},{"nombre":"Microcontroladores","creditos":3},{"nombre":"Ingeniería Económica","creditos":3},{"nombre":"Metodología de la Investigación","creditos":2}]},
+                 { "semestre": 6, "creditos": 16, "asignaturas": [{"nombre":"Teoría de Control I","creditos":3},{"nombre":"Comunicaciones I","creditos":3},{"nombre":"Procesamiento Digital de Señales (DSP)","creditos":3},{"nombre":"Sistemas Embebidos","creditos":3},{"nombre":"Medidas e Instrumentación","creditos":2},{"nombre":"Legislación","creditos":2}]},
+                 { "semestre": 7, "creditos": 15, "asignaturas": [{"nombre":"Teoría de Control II (Moderno)","creditos":3},{"nombre":"Comunicaciones II (Digitales)","creditos":3},{"nombre":"Redes de Datos","creditos":3},{"nombre":"Automatización y Robótica","creditos":3},{"nombre":"Formulación de Proyectos","creditos":3}]},
+                 { "semestre": 8, "creditos": 15, "asignaturas": [{"nombre":"Control Digital","creditos":3},{"nombre":"Comunicaciones Inalámbricas","creditos":3},{"nombre":"Inteligencia Artificial","creditos":3},{"nombre":"Arquitectura de Computadores","creditos":3},{"nombre":"Electiva Profesional I","creditos":3}]},
+                 { "semestre": 9, "creditos": 12, "asignaturas": [{"nombre":"Práctica Profesional","creditos":9},{"nombre":"Seminario de Grado I","creditos":3}]},
+                 { "semestre": 10, "creditos": 6, "asignaturas": [{"nombre":"Trabajo de Grado","creditos":6}]}
+              ],
+              "perfil_egreso": "Profesional innovador con capacidad para diseñar, implementar y mantener sistemas electrónicos en áreas de automatización, control y telecomunicaciones, aplicando tecnologías de vanguardia.",
+              "campo_laboral": "Ingeniero de diseño de hardware, especialista en automatización industrial, ingeniero de telecomunicaciones, desarrollador de sistemas embebidos, ingeniero de control."
+            },
+            {
+              "slug": "ingenieria-mecanica",
+              "nombre": "Ingeniería Mecánica",
+              "duracion_semestres": 10,
+              "modalidad": "Presencial",
+              "descripcion": "Aplica los principios de la física y la ciencia de materiales para el diseño, análisis, fabricación y mantenimiento de sistemas mecánicos.",
+              "imageUrl": "https://placehold.co/600x400/4FB0C6/ffffff?text=Ingenieria+Mecanica",
+              "pensum": [
+                 { "semestre": 1, "creditos": 16, "asignaturas": [{"nombre":"Cálculo I","creditos":3},{"nombre":"Álgebra Lineal","creditos":3},{"nombre":"Introducción a la Ing. Mecánica","creditos":2},{"nombre":"Dibujo Mecánico","creditos":3},{"nombre":"Comunicación Académica","creditos":2},{"nombre":"Química General","creditos":3}]},
+                 { "semestre": 2, "creditos": 17, "asignaturas": [{"nombre":"Cálculo II","creditos":3},{"nombre":"Física I (Mecánica)","creditos":3},{"nombre":"Estática","creditos":3},{"nombre":"Dibujo Asistido por Computador (CAD)","creditos":3},{"nombre":"Ciencia de Materiales I","creditos":3},{"nombre":"Constitución y Ética","creditos":2}]},
+                 { "semestre": 3, "creditos": 16, "asignaturas": [{"nombre":"Ecuaciones Diferenciales","creditos":3},{"nombre":"Física II (Electromagnetismo)","creditos":3},{"nombre":"Dinámica","creditos":3},{"nombre":"Mecánica de Sólidos I","creditos":3},{"nombre":"Probabilidad y Estadística","creditos":2},{"nombre":"Programación","creditos":2}]},
+                 { "semestre": 4, "creditos": 16, "asignaturas": [{"nombre":"Termodinámica I","creditos":3},{"nombre":"Mecánica de Fluidos","creditos":3},{"nombre":"Mecánica de Sólidos II","creditos":3},{"nombre":"Procesos de Manufactura I","creditos":3},{"nombre":"Análisis Numérico","creditos":2},{"nombre":"Economía","creditos":2}]},
+                 { "semestre": 5, "creditos": 17, "asignaturas": [{"nombre":"Termodinámica II","creditos":3},{"nombre":"Transferencia de Calor","creditos":3},{"nombre":"Diseño de Máquinas I","creditos":3},{"nombre":"Vibraciones Mecánicas","creditos":3},{"nombre":"Ingeniería Económica","creditos":3},{"nombre":"Metodología de la Investigación","creditos":2}]},
+                 { "semestre": 6, "creditos": 16, "asignaturas": [{"nombre":"Máquinas Térmicas","creditos":3},{"nombre":"Máquinas Hidráulicas","creditos":3},{"nombre":"Diseño de Máquinas II","creditos":3},{"nombre":"Procesos de Manufactura II","creditos":3},{"nombre":"Mantenimiento Industrial","creditos":2},{"nombre":"Legislación","creditos":2}]},
+                 { "semestre": 7, "creditos": 15, "asignaturas": [{"nombre":"Sistemas de Control","creditos":3},{"nombre":"Refrigeración y Aire Acondicionado","creditos":3},{"nombre":"Diseño Asistido por Computador (CAE)","creditos":3},{"nombre":"Automatización Industrial","creditos":3},{"nombre":"Formulación de Proyectos","creditos":3}]},
+                 { "semestre": 8, "creditos": 15, "asignaturas": [{"nombre":"Diseño de Elementos Finitos (FEA)","creditos":3},{"nombre":"Energías Renovables","creditos":3},{"nombre":"Motores de Combustión Interna","creditos":3},{"nombre":"Gestión de Proyectos","creditos":3},{"nombre":"Electiva Profesional I","creditos":3}]},
+                 { "semestre": 9, "creditos": 12, "asignaturas": [{"nombre":"Práctica Profesional","creditos":9},{"nombre":"Seminario de Grado I","creditos":3}]},
+                 { "semestre": 10, "creditos": 6, "asignaturas": [{"nombre":"Trabajo de Grado","creditos":6}]}
+               ],
+              "perfil_egreso": "Profesional con habilidades para diseñar, construir y mantener maquinaria y sistemas térmicos, aplicando principios de eficiencia energética y sostenibilidad.",
+              "campo_laboral": "Ingeniero de diseño mecánico, supervisor de mantenimiento, ingeniero de planta, especialista en termofluidos, consultor en eficiencia energética, gerente de producción."
+            }
+          ],
+          "tecnologicas": [
+            {
+              "slug": "tecnologia-desarrollo-software",
+              "nombre": "Tecnología en Desarrollo de Software",
+              "duracion_semestres": 6,
+              "modalidad": "Virtual",
+              "descripcion": "Forma tecnólogos capaces de analizar, diseñar, construir y probar soluciones de software, utilizando lenguajes de programación, bases de datos y frameworks modernos.",
+              "imageUrl": "https://placehold.co/600x400/8BC34A/ffffff?text=Desarrollo+de+Software",
+              "pensum": [
+                { "semestre": 1, "creditos": 16, "asignaturas": [{"nombre":"Lógica y Algoritmos","creditos":3},{"nombre":"Programación I (Fundamentos)","creditos":3},{"nombre":"Fundamentos Web (HTML, CSS, JS)","creditos":3},{"nombre":"Bases de Datos I (SQL)","creditos":3},{"nombre":"Matemática Discreta","creditos":2},{"nombre":"Habilidades Blandas","creditos":2}]},
+                { "semestre": 2, "creditos": 16, "asignaturas": [{"nombre":"Programación II (Orientada a Objetos)","creditos":3},{"nombre":"Estructuras de Datos","creditos":3},{"nombre":"Desarrollo Frontend con Frameworks","creditos":3},{"nombre":"Bases de Datos II (NoSQL)","creditos":3},{"nombre":"Sistemas Operativos","creditos":2},{"nombre":"Metodologías Ágiles (Scrum)","creditos":2}]},
+                { "semestre": 3, "creditos": 15, "asignaturas": [{"nombre":"Programación III (Backend)","creditos":3},{"nombre":"Arquitectura de Software","creditos":3},{"nombre":"Control de Versiones (Git)","creditos":2},{"nombre":"Introducción a Redes","creditos":2},{"nombre":"Estadística Descriptiva","creditos":3},{"nombre":"Inglés Técnico I","creditos":2}]},
+                { "semestre": 4, "creditos": 16, "asignaturas": [{"nombre":"Desarrollo de APIs REST","creditos":3},{"nombre":"Desarrollo Móvil I","creditos":3},{"nombre":"Calidad y Pruebas de Software (QA)","creditos":3},{"nombre":"Principios de Seguridad Informática","creditos":3},{"nombre":"Emprendimiento","creditos":2},{"nombre":"Inglés Técnico II","creditos":2}]},
+                { "semestre": 5, "creditos": 15, "asignaturas": [{"nombre":"Computación en la Nube (Básico)","creditos":3},{"nombre":"Desarrollo Móvil II","creditos":3},{"nombre":"Pruebas Automatizadas","creditos":3},{"nombre":"Introducción a DevOps (CI/CD)","creditos":3},{"nombre":"Legislación Informática","creditos":3}]},
+                { "semestre": 6, "creditos": 9, "asignaturas": [{"nombre":"Proyecto Integrador de Software","creditos":6},{"nombre":"Práctica Tecnológica","creditos":3}]}
+              ],
+              "perfil_egreso": "Tecnólogo con competencias para participar en el ciclo de vida del desarrollo de software, desde la concepción hasta el despliegue, aplicando buenas prácticas y metodologías ágiles.",
+              "campo_laboral": "Desarrollador de software junior, programador web (frontend/backend), analista de pruebas (QA), desarrollador de aplicaciones móviles, soporte técnico de aplicaciones."
+            },
+            {
+                "slug": "tecnologia-redes-telecomunicaciones",
+                "nombre": "Tecnología en Redes y Telecomunicaciones",
+                "duracion_semestres": 6,
+                "modalidad": "Presencial",
+                "descripcion": "Forma tecnólogos para instalar, configurar, administrar y mantener infraestructuras de redes de datos y sistemas de telecomunicaciones.",
+                "imageUrl": "https://placehold.co/600x400/8BC34A/ffffff?text=Redes+y+Telecom",
+                "pensum": [
+                    {"semestre":1,"creditos":16,"asignaturas":[{"nombre":"Matemáticas Básicas","creditos":3},{"nombre":"Fundamentos de Electricidad y Electrónica","creditos":3},{"nombre":"Introducción a las Redes","creditos":3},{"nombre":"Lógica y Algoritmos","creditos":3},{"nombre":"Hardware de Computadores","creditos":2},{"nombre":"Comunicación","creditos":2}]},
+                    {"semestre":2,"creditos":16,"asignaturas":[{"nombre":"Enrutamiento y Conmutación I","creditos":3},{"nombre":"Sistemas Operativos de Red","creditos":3},{"nombre":"Cableado Estructurado","creditos":3},{"nombre":"Fundamentos de Telecomunicaciones","creditos":3},{"nombre":"Física Básica","creditos":2},{"nombre":"Ética Profesional","creditos":2}]},
+                    {"semestre":3,"creditos":15,"asignaturas":[{"nombre":"Enrutamiento y Conmutación II","creditos":3},{"nombre":"Redes Inalámbricas","creditos":3},{"nombre":"Seguridad en Redes","creditos":3},{"nombre":"Telefonía IP (VoIP)","creditos":3},{"nombre":"Inglés Técnico I","creditos":3}]},
+                    {"semestre":4,"creditos":16,"asignaturas":[{"nombre":"Administración de Servidores","creditos":3},{"nombre":"Servicios de Red (DNS, DHCP, FTP)","creditos":3},{"nombre":"Seguridad Perimetral (Firewalls)","creditos":3},{"nombre":"Comunicaciones por Fibra Óptica","creditos":3},{"nombre":"Estadística","creditos":2},{"nombre":"Inglés Técnico II","creditos":2}]},
+                    {"semestre":5,"creditos":15,"asignaturas":[{"nombre":"Redes WAN y Conectividad Remota","creditos":3},{"nombre":"Monitoreo y Gestión de Redes","creditos":3},{"nombre":"Virtualización y Cloud Básico","creditos":3},{"nombre":"Fundamentos de IoT","creditos":3},{"nombre":"Legislación y Normativa","creditos":3}]},
+                    {"semestre":6,"creditos":9,"asignaturas":[{"nombre":"Proyecto Integrador de Redes","creditos":6},{"nombre":"Práctica Tecnológica","creditos":3}]}
+                ],
+                "perfil_egreso": "Tecnólogo con capacidad para implementar y gestionar soluciones de conectividad, garantizando la disponibilidad, rendimiento y seguridad de las redes de datos y telecomunicaciones.",
+                "campo_laboral": "Administrador de redes, técnico de soporte en sitio (NOC), especialista en infraestructura de TI, técnico de telecomunicaciones, analista de seguridad de redes."
+            },
+            {
+                "slug": "tecnologia-gestion-logistica",
+                "nombre": "Tecnología en Gestión Logística",
+                "duracion_semestres": 6,
+                "modalidad": "Virtual",
+                "descripcion": "Forma tecnólogos para planificar, ejecutar y controlar el flujo eficiente de bienes, servicios e información en la cadena de suministro.",
+                "imageUrl": "https://placehold.co/600x400/8BC34A/ffffff?text=Gestion+Logistica",
+                "pensum": [
+                    {"semestre":1,"creditos":16,"asignaturas":[{"nombre":"Fundamentos de Logística","creditos":3},{"nombre":"Matemáticas Operativas","creditos":3},{"nombre":"Introducción a la Administración","creditos":3},{"nombre":"Informática Básica","creditos":3},{"nombre":"Contabilidad General","creditos":2},{"nombre":"Comunicación Empresarial","creditos":2}]},
+                    {"semestre":2,"creditos":16,"asignaturas":[{"nombre":"Gestión de Inventarios y Almacenamiento","creditos":3},{"nombre":"Costos y Presupuestos","creditos":3},{"nombre":"Estadística Descriptiva","creditos":3},{"nombre":"Procesos y Procedimientos","creditos":3},{"nombre":"Economía Básica","creditos":2},{"nombre":"Ética y Responsabilidad Social","creditos":2}]},
+                    {"semestre":3,"creditos":15,"asignaturas":[{"nombre":"Transporte y Distribución Física","creditos":3},{"nombre":"Cadena de Suministro (Supply Chain)","creditos":3},{"nombre":"Sistemas de Información Logística","creditos":3},{"nombre":"Compras y Aprovisionamiento","creditos":3},{"nombre":"Inglés Técnico I","creditos":3}]},
+                    {"semestre":4,"creditos":16,"asignaturas":[{"nombre":"Logística Internacional y Aduanas","creditos":3},{"nombre":"Gestión de la Calidad","creditos":3},{"nombre":"Embalaje y Manejo de Carga","creditos":3},{"nombre":"Salud Ocupacional en Logística","creditos":3},{"nombre":"Mercadeo","creditos":2},{"nombre":"Inglés Técnico II","creditos":2}]},
+                    {"semestre":5,"creditos":15,"asignaturas":[{"nombre":"Logística Inversa y Sostenibilidad","creditos":3},{"nombre":"Indicadores de Gestión (KPIs)","creditos":3},{"nombre":"Optimización de Operaciones","creditos":3},{"nombre":"Negociación y Servicio al Cliente","creditos":3},{"nombre":"Legislación Comercial","creditos":3}]},
+                    {"semestre":6,"creditos":9,"asignaturas":[{"nombre":"Proyecto Integrador de Logística","creditos":6},{"nombre":"Práctica Tecnológica","creditos":3}]}
+                ],
+                "perfil_egreso": "Tecnólogo competente para coordinar operaciones de almacenamiento, transporte y distribución, optimizando recursos y mejorando el servicio al cliente dentro de la cadena de suministro.",
+                "campo_laboral": "Coordinador de almacén, analista de inventarios, supervisor de transporte, asistente de compras, analista logístico, auxiliar de aduanas."
+            },
+            {
+                "slug": "tecnologia-mantenimiento-industrial",
+                "nombre": "Tecnología en Mantenimiento Industrial",
+                "duracion_semestres": 6,
+                "modalidad": "Presencial",
+                "descripcion": "Prepara tecnólogos para ejecutar y supervisar planes de mantenimiento preventivo, predictivo y correctivo en equipos y sistemas industriales.",
+                "imageUrl": "https://placehold.co/600x400/8BC34A/ffffff?text=Mantenimiento+Industrial",
+                "pensum": [
+                    {"semestre":1,"creditos":16,"asignaturas":[{"nombre":"Matemáticas Aplicadas","creditos":3},{"nombre":"Dibujo Técnico e Interpretación de Planos","creditos":3},{"nombre":"Fundamentos de Mecánica","creditos":3},{"nombre":"Electricidad Industrial Básica","creditos":3},{"nombre":"Seguridad Industrial","creditos":2},{"nombre":"Comunicación","creditos":2}]},
+                    {"semestre":2,"creditos":16,"asignaturas":[{"nombre":"Metrología y Control Dimensional","creditos":3},{"nombre":"Materiales y Tratamientos Térmicos","creditos":3},{"nombre":"Mecanismos y Elementos de Máquinas","creditos":3},{"nombre":"Neumática e Hidráulica","creditos":3},{"nombre":"Herramientas Informáticas","creditos":2},{"nombre":"Ética","creditos":2}]},
+                    {"semestre":3,"creditos":15,"asignaturas":[{"nombre":"Mantenimiento Predictivo y Diagnóstico","creditos":3},{"nombre":"Electrónica Industrial","creditos":3},{"nombre":"Soldadura y Procesos de Unión","creditos":3},{"nombre":"Lubricación Industrial","creditos":3},{"nombre":"Inglés Técnico I","creditos":3}]},
+                    {"semestre":4,"creditos":16,"asignaturas":[{"nombre":"Mantenimiento Preventivo y Planificación","creditos":3},{"nombre":"Sistemas de Control (PLC Básico)","creditos":3},{"nombre":"Análisis de Vibraciones","creditos":3},{"nombre":"Máquinas y Herramientas","creditos":3},{"nombre":"Costos de Mantenimiento","creditos":2},{"nombre":"Inglés Técnico II","creditos":2}]},
+                    {"semestre":5,"creditos":15,"asignaturas":[{"nombre":"Gestión del Mantenimiento (TPM, RCM)","creditos":3},{"nombre":"Automatización y Robótica Básica","creditos":3},{"nombre":"Termografía Aplicada","creditos":3},{"nombre":"Calidad en Mantenimiento","creditos":3},{"nombre":"Normativa Ambiental","creditos":3}]},
+                    {"semestre":6,"creditos":9,"asignaturas":[{"nombre":"Proyecto Integrador de Mantenimiento","creditos":6},{"nombre":"Práctica Tecnológica","creditos":3}]}
+                ],
+                "perfil_egreso": "Tecnólogo capaz de diagnosticar fallas, planificar y ejecutar actividades de mantenimiento en sistemas mecánicos, eléctricos y de automatización para asegurar la operatividad de plantas industriales.",
+                "campo_laboral": "Técnico de mantenimiento, supervisor de mantenimiento mecánico, planificador de mantenimiento, inspector de calidad, técnico de mantenimiento predictivo."
+            },
+            {
+                "slug": "tecnologia-analisis-de-datos",
+                "nombre": "Tecnología en Análisis de Datos",
+                "duracion_semestres": 6,
+                "modalidad": "Virtual",
+                "descripcion": "Forma tecnólogos para recolectar, procesar, analizar y visualizar grandes volúmenes de datos para apoyar la toma de decisiones empresariales.",
+                "imageUrl": "https://placehold.co/600x400/8BC34A/ffffff?text=Analisis+de+Datos",
+                "pensum": [
+                    {"semestre":1,"creditos":16,"asignaturas":[{"nombre":"Fundamentos de Programación (Python)","creditos":3},{"nombre":"Matemáticas para Ciencia de Datos","creditos":3},{"nombre":"Estadística Descriptiva","creditos":3},{"nombre":"Bases de Datos Relacionales (SQL)","creditos":3},{"nombre":"Lógica y Pensamiento Crítico","creditos":2},{"nombre":"Comunicación de Datos","creditos":2}]},
+                    {"semestre":2,"creditos":16,"asignaturas":[{"nombre":"Programación para Análisis de Datos (Pandas)","creditos":3},{"nombre":"Estadística Inferencial","creditos":3},{"nombre":"Visualización de Datos (Tableau/Power BI)","creditos":3},{"nombre":"Extracción y Limpieza de Datos (ETL)","creditos":3},{"nombre":"Modelado de Datos","creditos":2},{"nombre":"Ética de Datos","creditos":2}]},
+                    {"semestre":3,"creditos":15,"asignaturas":[{"nombre":"Minería de Datos","creditos":3},{"nombre":"Bases de Datos NoSQL","creditos":3},{"nombre":"Análisis Exploratorio de Datos (EDA)","creditos":3},{"nombre":"Inteligencia de Negocios (BI)","creditos":3},{"nombre":"Inglés Técnico I","creditos":3}]},
+                    {"semestre":4,"creditos":16,"asignaturas":[{"nombre":"Introducción al Aprendizaje Automático","creditos":3},{"nombre":"Análisis de Series de Tiempo","creditos":3},{"nombre":"Narrativa de Datos (Storytelling)","creditos":3},{"nombre":"Herramientas de Big Data (Básico)","creditos":3},{"nombre":"Gestión de Proyectos de Datos","creditos":2},{"nombre":"Inglés Técnico II","creditos":2}]},
+                    {"semestre":5,"creditos":15,"asignaturas":[{"nombre":"Modelos de Clasificación y Regresión","creditos":3},{"nombre":"Análisis de Textos","creditos":3},{"nombre":"Despliegue de Modelos (Básico)","creditos":3},{"nombre":"Dashboards y Reportes Automatizados","creditos":3},{"nombre":"Legislación de Protección de Datos","creditos":3}]},
+                    {"semestre":6,"creditos":9,"asignaturas":[{"nombre":"Proyecto Integrador de Análisis de Datos","creditos":6},{"nombre":"Práctica Tecnológica","creditos":3}]}
+                ],
+                "perfil_egreso": "Tecnólogo con habilidades para transformar datos crudos en información valiosa, utilizando herramientas estadísticas y de software para crear visualizaciones y reportes que impulsen estrategias de negocio.",
+                "campo_laboral": "Analista de datos junior, analista de inteligencia de negocios (BI), visualizador de datos, analista de marketing digital, analista de calidad de datos."
+            },
+            {
+                "slug": "tecnologia-seguridad-salud-trabajo",
+                "nombre": "Tecnología en Seguridad y Salud en el Trabajo",
+                "duracion_semestres": 6,
+                "modalidad": "Presencial / Virtual",
+                "descripcion": "Forma tecnólogos para diseñar, implementar y administrar sistemas de gestión de la seguridad y salud en el trabajo (SG-SST) para prevenir riesgos laborales.",
+                "imageUrl": "https://placehold.co/600x400/8BC34A/ffffff?text=Seguridad+y+Salud",
+                "pensum": [
+                    {"semestre":1,"creditos":16,"asignaturas":[{"nombre":"Introducción al SG-SST","creditos":3},{"nombre":"Biología y Química Básica","creditos":3},{"nombre":"Fundamentos de Administración","creditos":3},{"nombre":"Legislación en SST I","creditos":3},{"nombre":"Matemáticas Básicas","creditos":2},{"nombre":"Técnicas de Comunicación","creditos":2}]},
+                    {"semestre":2,"creditos":16,"asignaturas":[{"nombre":"Higiene Industrial I (Riesgos Físicos)","creditos":3},{"nombre":"Seguridad Industrial I (Riesgo Mecánico)","creditos":3},{"nombre":"Medicina Preventiva y del Trabajo","creditos":3},{"nombre":"Legislación en SST II","creditos":3},{"nombre":"Estadística Descriptiva","creditos":2},{"nombre":"Ética Profesional","creditos":2}]},
+                    {"semestre":3,"creditos":15,"asignaturas":[{"nombre":"Higiene Industrial II (Riesgos Químicos)","creditos":3},{"nombre":"Seguridad Industrial II (Riesgo Eléctrico)","creditos":3},{"nombre":"Ergonomía y Psicosociología","creditos":3},{"nombre":"Planes de Emergencia y Brigadas","creditos":3},{"nombre":"Inglés Técnico I","creditos":3}]},
+                    {"semestre":4,"creditos":16,"asignaturas":[{"nombre":"Identificación de Peligros y Valoración de Riesgos","creditos":3},{"nombre":"Investigación de Accidentes de Trabajo","creditos":3},{"nombre":"Sistemas de Vigilancia Epidemiológica","creditos":3},{"nombre":"Gestión Ambiental","creditos":3},{"nombre":"Sistemas de Información","creditos":2},{"nombre":"Inglés Técnico II","creditos":2}]},
+                    {"semestre":5,"creditos":15,"asignaturas":[{"nombre":"Diseño e Implementación del SG-SST","creditos":3},{"nombre":"Auditoría del SG-SST","creditos":3},{"nombre":"Gestión de Contratistas","creditos":3},{"nombre":"Indicadores de Gestión en SST","creditos":3},{"nombre":"Formulación de Proyectos","creditos":3}]},
+                    {"semestre":6,"creditos":9,"asignaturas":[{"nombre":"Proyecto Integrador en SST","creditos":6},{"nombre":"Práctica Tecnológica","creditos":3}]}
+                ],
+                "perfil_egreso": "Tecnólogo con la capacidad de identificar peligros, evaluar riesgos y proponer medidas de control para crear ambientes de trabajo seguros y saludables, cumpliendo con la normativa vigente.",
+                "campo_laboral": "Coordinador de SST, inspector de seguridad, analista de riesgos laborales, formador en prevención, asistente en ARL (Administradora de Riesgos Laborales)."
+            }
+          ]
+        };
+
+        const titulosData = {
+          "registros": [
+            {
+              "numero": "SM11471",
+              "nombre": "Samuel Felipe Rendón Bernal",
+              "programa": "Ingeniería Industrial",
+              "universidad": "UTEC – Universidad Tecnológica de Colombia",
+              "fecha_grado_iso": "2011-12-20",
+              "estado": "VALIDO",
+              "documento": "C.C. 1.113.642.471 de Palmira, Valle",
+              // --- CAMBIO: Se agregaron los datos de registro ---
+              "registro": "003258",
+              "libro": "0027",
+              "folio": "1025"
+            }
+          ]
+        };
+        
+        //============= REACT COMPONENTS =============//
+
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // --- Layout Components ---
+
+        const Header = ({ setRoute }) => {
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [isScrolled, setIsScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    setIsScrolled(window.scrollY > 10);
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+            
+            const navLinks = [
+                { href: '#/', label: 'Inicio' },
+                { href: '#/carreras', label: 'Carreras' },
+                { href: '#/admisiones', label: 'Admisiones' },
+                { href: '#/verificacion-titulos', label: 'Verificación de Títulos' },
+                { href: '#/contacto', label: 'Contacto' },
+            ];
+
+            return (
+                <header className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 shadow-md backdrop-blur-sm' : 'bg-white'}`}>
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-20">
+                            <a href="#/" onClick={() => setRoute('#/')} className="flex items-center space-x-2">
+                                <span className="w-10 h-10 bg-[#4FB0C6] rounded-full flex items-center justify-center text-white font-bold text-xl">U</span>
+                                <span className="font-bold text-xl text-gray-800 hidden sm:block">UTEC</span>
+                            </a>
+                            <nav className="hidden md:flex space-x-8">
+                                {navLinks.map(link => (
+                                     <a key={link.href} href={link.href} onClick={() => setRoute(link.href)} className="text-gray-600 hover:text-[#4FB0C6] font-medium transition-colors">
+                                        {link.label}
+                                     </a>
+                                ))}
+                            </nav>
+                            <div className="md:hidden">
+                                <button onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Abrir menú">
+                                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {isMenuOpen && (
+                        <div className="md:hidden bg-white shadow-lg">
+                            <nav className="flex flex-col items-center space-y-4 py-4">
+                               {navLinks.map(link => (
+                                     <a key={link.href} href={link.href} onClick={() => { setRoute(link.href); setIsMenuOpen(false); }} className="text-gray-600 hover:text-[#4FB0C6] font-medium transition-colors">
+                                        {link.label}
+                                     </a>
+                                ))}
+                            </nav>
+                        </div>
+                    )}
+                </header>
+            );
+        };
+        
+        const Footer = () => (
+             <footer className="bg-[#E8F6F9] text-gray-700 mt-16">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div>
+                            <h3 className="font-bold text-lg text-[#4FB0C6] mb-4">UTEC</h3>
+                            <p className="text-sm">Formando líderes en ingeniería y tecnología para el futuro de Colombia y el mundo.</p>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-4">Enlaces Rápidos</h3>
+                            <ul className="space-y-2 text-sm">
+                                <li><a href="#/carreras" className="hover:text-[#4FB0C6]">Programas Académicos</a></li>
+                                <li><a href="#/admisiones" className="hover:text-[#4FB0C6]">Admisiones</a></li>
+                                <li><a href="#/contacto" className="hover:text-[#4FB0C6]">Vida en el Campus</a></li>
+                                <li><a href="#/verificacion-titulos" className="hover:text-[#4FB0C6]">Egresados</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg mb-4">Contacto</h3>
+                            <ul className="space-y-2 text-sm">
+                                {/* --- CAMBIO: Se actualizó la información de contacto --- */}
+                                <li>Dirección: Carrera 15 # 88 - 35, Bogotá, Colombia</li>
+                                <li>Teléfono: +57 (601) 333 1122</li>
+                                <li>Email: informacion@utec.edu.co</li>
+                            </ul>
+                        </div>
+                         <div>
+                            <h3 className="font-bold text-lg mb-4">Síguenos</h3>
+                            <div className="flex space-x-4">
+                                <a href="#" aria-label="Facebook" className="text-gray-500 hover:text-[#4FB0C6]"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.494v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg></a>
+                                <a href="#" aria-label="Twitter" className="text-gray-500 hover:text-[#4FB0C6]"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.634 4.212 3.793 4.649-.41.109-.844.168-1.288.168-.328 0-.642-.029-.95-.084.618 1.905 2.422 3.238 4.545 3.275-1.625 1.272-3.669 2.029-5.88 2.029-.395 0-.783-.022-1.166-.067 2.099 1.344 4.604 2.129 7.333 2.129 8.547 0 13.31-7.056 12.934-13.653.947-.686 1.798-1.542 2.433-2.529z"/></svg></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="text-center text-sm mt-8 border-t border-[#97D8E1] pt-6">
+                        <p>&copy; {new Date().getFullYear()} UTEC – Universidad Tecnológica de Colombia. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        // --- Page Components ---
+
+        const HomePage = ({ setRoute }) => {
+            useEffect(() => {
+                document.title = "Inicio | UTEC – Universidad Tecnológica de Colombia";
+                window.scrollTo(0, 0);
+            }, []);
+
+            const features = [
+                { title: "Cuerpo Docente de Excelencia", description: "Profesores con amplia experiencia académica y profesional, comprometidos con tu formación.", icon: "academic" },
+                { title: "Campus Moderno y Sostenible", description: "Instalaciones de vanguardia, laboratorios equipados y amplias zonas verdes para tu bienestar.", icon: "campus" },
+                { title: "Investigación e Innovación", description: "Participa en proyectos que generan conocimiento y soluciones a problemas reales de la industria.", icon: "lab" }
+            ];
+            
+            const Icon = ({name}) => {
+                if(name === "academic") return <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[#4FB0C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>;
+                if(name === "campus") return <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[#4FB0C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222 4 2.222V20M1 12v7a2 2 0 002 2h18a2 2 0 002-2v-7" /></svg>;
+                if(name === "lab") return <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[#4FB0C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547a2 2 0 00-.547 1.806l.477 2.387a6 6 0 00.517 3.86l.158.318a6 6 0 00.517 3.86l2.387.477a2 2 0 001.806.547a2 2 0 00.547-1.806l-.477-2.387a6 6 0 00-.517-3.86l-.158-.318a6 6 0 00-.517-3.86l-2.387-.477a2 2 0 00-.547-1.806zM15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
+                return null;
+            }
+
+            return (
+                <div>
+                    <section className="bg-[#E8F6F9] text-center py-20 lg:py-32">
+                        <div className="container mx-auto px-4">
+                            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4">UTEC – Universidad Tecnológica de Colombia</h1>
+                            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">Formando el futuro con excelencia académica, innovación y un profundo sentido humano.</p>
+                            <a href="#/carreras" onClick={() => setRoute('#/carreras')} className="bg-[#4FB0C6] text-white font-bold py-3 px-8 rounded-full hover:bg-[#3d8c9e] transition-colors text-lg">
+                                Conoce Nuestras Carreras
+                            </a>
+                        </div>
+                    </section>
+                    
+                    <section className="py-16 lg:py-24">
+                        <div className="container mx-auto px-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {features.map((feature, index) => (
+                                    <div key={index} className="bg-white p-8 rounded-lg shadow-md border border-gray-100 text-center">
+                                        <div className="flex justify-center mb-4"><Icon name={feature.icon} /></div>
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-2">{feature.title}</h3>
+                                        <p className="text-gray-600">{feature.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section className="bg-gray-50 py-16 lg:py-24">
+                         <div className="container mx-auto px-4">
+                             <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Programas Destacados</h2>
+                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                <HighlightCard setRoute={setRoute} title="Ingenierías" link="#/carreras?tipo=ingenierias" description="Soluciones innovadoras a los desafíos del mañana." />
+                                <HighlightCard setRoute={setRoute} title="Carreras Tecnológicas" link="#/carreras?tipo=tecnologicas" description="Formación práctica para el mundo digital." />
+                                <HighlightCard setRoute={setRoute} title="Admisiones" link="#/admisiones" description="Inicia tu camino profesional en UTEC." />
+                                <HighlightCard setRoute={setRoute} title="Verificación de Títulos" link="#/verificacion-titulos" description="Valida la autenticidad de un título UTEC." />
+                             </div>
+                         </div>
+                    </section>
+                </div>
+            );
+        };
+        
+        const HighlightCard = ({ setRoute, title, description, link }) => (
+            <a href={link} onClick={() => setRoute(link)} className="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
+                <h3 className="text-xl font-bold text-[#4FB0C6] mb-2">{title}</h3>
+                <p className="text-gray-600">{description}</p>
+            </a>
+        );
+        
+        const CarrerasPage = ({ setRoute }) => {
+            const [searchTerm, setSearchTerm] = useState('');
+            const [filter, setFilter] = useState('todos');
+
+            useEffect(() => {
+                const params = new URLSearchParams(window.location.hash.split('?')[1]);
+                const tipo = params.get('tipo');
+                if (tipo === 'ingenierias' || tipo === 'tecnologicas') setFilter(tipo);
+                else setFilter('todos');
+                document.title = "Carreras | UTEC";
+                window.scrollTo(0, 0);
+            }, []);
+            
+            const carrerasFiltradas = useMemo(() => {
+                let ingenierias = carrerasData.ingenierias;
+                let tecnologicas = carrerasData.tecnologicas;
+                if (searchTerm) {
+                    ingenierias = ingenierias.filter(c => c.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
+                    tecnologicas = tecnologicas.filter(c => c.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
+                }
+                return { ingenierias, tecnologicas };
+            }, [searchTerm]);
+
+            return (
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <h1 className="text-4xl font-bold text-center mb-4">Nuestros Programas Académicos</h1>
+                    <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">Explora nuestra oferta de carreras diseñadas para enfrentar los retos del futuro y prepararte para el éxito profesional.</p>
+                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-10">
+                        <input type="text" placeholder="Buscar carrera..." className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-[#4FB0C6] focus:outline-none" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <div className="flex space-x-2 bg-gray-100 p-1 rounded-full">
+                            <button onClick={() => setFilter('todos')} className={`px-4 py-1 rounded-full text-sm font-medium ${filter === 'todos' ? 'bg-[#4FB0C6] text-white' : 'text-gray-600'}`}>Todos</button>
+                            <button onClick={() => setFilter('ingenierias')} className={`px-4 py-1 rounded-full text-sm font-medium ${filter === 'ingenierias' ? 'bg-[#4FB0C6] text-white' : 'text-gray-600'}`}>Ingenierías</button>
+                            <button onClick={() => setFilter('tecnologicas')} className={`px-4 py-1 rounded-full text-sm font-medium ${filter === 'tecnologicas' ? 'bg-[#4FB0C6] text-white' : 'text-gray-600'}`}>Tecnológicas</button>
+                        </div>
+                    </div>
+                    {(filter === 'todos' || filter === 'ingenierias') && carrerasFiltradas.ingenierias.length > 0 && (
+                        <div className="mb-12">
+                             {/* --- CAMBIO: Se centró y ajustó el estilo del título --- */}
+                            <h2 className="text-3xl font-bold text-center mb-8 pb-2 border-b-2 border-[#4FB0C6]">Ingenierías</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {carrerasFiltradas.ingenierias.map(c => <CarreraCard key={c.slug} carrera={c} setRoute={setRoute} tipo="ingenierias" />)}
+                            </div>
+                        </div>
+                    )}
+                    {(filter === 'todos' || filter === 'tecnologicas') && carrerasFiltradas.tecnologicas.length > 0 && (
+                        <div>
+                           {/* --- CAMBIO: Se centró y ajustó el estilo del título --- */}
+                           <h2 className="text-3xl font-bold text-center mb-8 pb-2 border-b-2 border-[#8BC34A]">Carreras Tecnológicas</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {carrerasFiltradas.tecnologicas.map(c => <CarreraCard key={c.slug} carrera={c} setRoute={setRoute} tipo="tecnologicas" />)}
+                            </div>
+                        </div>
+                    )}
+                    {carrerasFiltradas.ingenierias.length === 0 && carrerasFiltradas.tecnologicas.length === 0 && (<p className="text-center text-gray-600 mt-12">No se encontraron carreras con ese nombre.</p>)}
+                </div>
+            );
+        };
+        
+        const CarreraCard = ({ carrera, setRoute, tipo }) => (
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 group flex flex-col">
+                <img src={carrera.imageUrl} alt={carrera.nombre} className="w-full h-48 object-cover" />
+                <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{carrera.nombre}</h3>
+                    <p className="text-gray-600 text-sm mb-4 flex-grow">{carrera.descripcion.substring(0, 100)}...</p>
+                    <div className="text-xs text-gray-500 space-y-1 mb-4">
+                        <p><strong>Duración:</strong> {carrera.duracion_semestres} semestres</p>
+                        <p><strong>Modalidad:</strong> {carrera.modalidad}</p>
+                    </div>
+                    <a href={`#/carreras/${carrera.slug}`} onClick={() => setRoute(`#/carreras/${carrera.slug}`)} className="font-semibold text-[#4FB0C6] group-hover:underline mt-auto">
+                        Ver plan de estudios &rarr;
+                    </a>
+                </div>
+            </div>
+        );
+
+        const CarreraDetallePage = ({ setRoute, slug }) => {
+            const carrera = useMemo(() => {
+                return [...carrerasData.ingenierias, ...carrerasData.tecnologicas].find(c => c.slug === slug);
+            }, [slug]);
+
+            useEffect(() => {
+                if (carrera) document.title = `${carrera.nombre} | UTEC`;
+                window.scrollTo(0, 0);
+            }, [carrera]);
+            
+            if (!carrera) return <div className="text-center py-20">Carrera no encontrada.</div>;
+            
+            const totalCreditos = carrera.pensum.reduce((acc, sem) => acc + sem.creditos, 0);
+            const tipo = carrerasData.ingenierias.some(c => c.slug === slug) ? 'Ingeniería' : 'Tecnología';
+            
+            return (
+                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                     <nav className="text-sm text-gray-500 mb-6">
+                         <a href="#/carreras" onClick={() => setRoute('#/carreras')} className="hover:underline">Carreras</a>
+                         <span className="mx-2">&gt;</span>
+                         <span>{carrera.nombre}</span>
+                     </nav>
+                     
+                     <img src={carrera.imageUrl} alt={`Banner de ${carrera.nombre}`} className="w-full h-64 object-cover rounded-lg mb-8 shadow-md" />
+
+                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                        <div className="lg:col-span-2">
+                             <h1 className="text-4xl font-bold text-gray-800 mb-2">{carrera.nombre}</h1>
+                             <p className="text-lg text-gray-600 mb-6">{tipo}</p>
+                             <p className="mb-8">{carrera.descripcion}</p>
+                             <h2 className="text-2xl font-bold mb-6 mt-12 border-l-4 border-[#4FB0C6] pl-4">Plan de Estudios</h2>
+                             <div className="space-y-4">
+                                {carrera.pensum.map(semestre => (<SemestreAccordion key={semestre.semestre} semestre={semestre} />))}
+                             </div>
+                        </div>
+                        <div className="lg:col-span-1">
+                             <div className="bg-[#E8F6F9] p-6 rounded-lg sticky top-24">
+                                <h3 className="text-xl font-bold mb-4">Información Clave</h3>
+                                <ul className="space-y-3 text-gray-700">
+                                    <li><strong>Duración:</strong> {carrera.duracion_semestres} semestres</li>
+                                    <li><strong>Total Créditos:</strong> {totalCreditos}</li>
+                                    <li><strong>Modalidad:</strong> {carrera.modalidad}</li>
+                                </ul>
+                                <button className="w-full mt-6 bg-[#8BC34A] text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors">Inscríbete Ahora</button>
+                             </div>
+                             <div className="mt-8 bg-white p-6 rounded-lg border">
+                                <h3 className="text-xl font-bold mb-4">Perfil del Egresado</h3>
+                                <p className="text-sm text-gray-600">{carrera.perfil_egreso}</p>
+                             </div>
+                             <div className="mt-8 bg-white p-6 rounded-lg border">
+                                <h3 className="text-xl font-bold mb-4">Campo Laboral</h3>
+                                <p className="text-sm text-gray-600">{carrera.campo_laboral}</p>
+                             </div>
+                        </div>
+                     </div>
+                 </div>
+            );
+        };
+        
+        const SemestreAccordion = ({ semestre }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            return (
+                <div className="border rounded-lg overflow-hidden">
+                    <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100">
+                        <span className="font-semibold">Semestre {semestre.semestre}</span>
+                        <div className="flex items-center space-x-4">
+                           <span className="text-sm text-gray-600">Total Créditos: {semestre.creditos}</span>
+                           <svg className={`w-5 h-5 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                    </button>
+                    {isOpen && (
+                        <div className="p-4 border-t">
+                             <ul className="space-y-2">
+                                {semestre.asignaturas.map(asig => (<li key={asig.nombre} className="flex justify-between text-sm"><span>{asig.nombre}</span><span className="text-gray-500">{asig.creditos} créditos</span></li>))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        
+        const AdmisionesPage = () => {
+             useEffect(() => {
+                document.title = "Admisiones | UTEC";
+                window.scrollTo(0, 0);
+            }, []);
+            
+            const steps = ["Completa el formulario de inscripción en línea.", "Adjunta los documentos requeridos (identificación, notas, etc.).", "Realiza el pago de los derechos de inscripción.", "Presenta la entrevista y/o prueba de admisión.", "Consulta los resultados y legaliza tu matrícula."];
+
+            return (
+                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                     <h1 className="text-4xl font-bold text-center mb-4">Proceso de Admisiones</h1>
+                     <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Sigue estos pasos para formar parte de la familia UTEC. Estamos aquí para guiarte en cada etapa.</p>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                         <div>
+                            <h2 className="text-2xl font-bold mb-6">Pasos para la Inscripción</h2>
+                            <ol className="list-decimal list-inside space-y-4">
+                                {steps.map((step, i) => (<li key={i} className="text-gray-700">{step}</li>))}
+                            </ol>
+                            <button className="mt-8 bg-[#4FB0C6] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#3d8c9e] transition-colors">Solicitar Información</button>
+                         </div>
+                         <div className="bg-[#E8F6F9] p-6 rounded-lg">
+                             <h2 className="text-2xl font-bold mb-6">Requisitos Generales</h2>
+                             <ul className="list-disc list-inside space-y-2 text-gray-700"><li>Fotocopia del documento de identidad.</li><li>Resultados del examen de Estado (ICFES).</li><li>Certificado de notas de bachillerato.</li><li>Fotocopia del acta de grado o diploma de bachiller.</li><li>Recibo de pago de inscripción.</li></ul>
+                             <h2 className="text-2xl font-bold mt-8 mb-6">Calendario Académico 2025-II</h2>
+                             <ul className="space-y-2 text-gray-700 text-sm"><li><strong>Inscripciones:</strong> 1 de Octubre - 30 de Noviembre</li><li><strong>Entrevistas:</strong> 1 - 15 de Diciembre</li><li><strong>Resultados:</strong> 20 de Diciembre</li><li><strong>Matrículas:</strong> 10 - 20 de Enero</li><li><strong>Inicio de clases:</strong> 27 de Enero</li></ul>
+                         </div>
+                     </div>
+                 </div>
+            );
+        };
+        
+        const VerificacionPage = () => {
+            const [numero, setNumero] = useState('');
+            const [resultado, setResultado] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState('');
+
+            useEffect(() => {
+                document.title = "Verificación de Títulos | UTEC";
+                window.scrollTo(0, 0);
+            }, []);
+
+            const handleVerify = async (e) => {
+                e.preventDefault();
+                if (!numero) { setError('Por favor, ingresa un número de verificación.'); return; }
+                setLoading(true); setError(''); setResultado(null);
+                await new Promise(res => setTimeout(res, 1000));
+                const registro = titulosData.registros.find(r => r.numero === numero);
+                if (registro) {
+                    const hashString = `${registro.numero}|${registro.nombre}|${registro.programa}|${registro.fecha_grado_iso}`;
+                    const hash = await digestMessage(hashString);
+                    const fechaGrado = new Date(registro.fecha_grado_iso + 'T00:00:00-05:00').toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Bogota' });
+                    setResultado({ ...registro, hash, fecha_grado_formateada: fechaGrado });
+                } else {
+                    setError('Número de verificación no encontrado. Por favor, verifica el número e intenta de nuevo.');
+                }
+                setLoading(false);
+            };
+
+            return (
+                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                     <div className="max-w-xl mx-auto text-center">
+                        <h1 className="text-4xl font-bold mb-4">Verificación de Títulos</h1>
+                        <p className="text-gray-600 mb-8">Ingresa el número de verificación único que se encuentra en el diploma o acta de grado para confirmar su autenticidad.</p>
+                        <form onSubmit={handleVerify} className="flex flex-col sm:flex-row gap-2">
+                             <input type="text" value={numero} onChange={(e) => setNumero(e.target.value.toUpperCase())} className="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4FB0C6] focus:outline-none" />
+                             <button type="submit" disabled={loading} className="bg-[#4FB0C6] text-white font-bold py-2 px-6 rounded-md hover:bg-[#3d8c9e] transition-colors disabled:bg-gray-400">{loading ? 'Verificando...' : 'Verificar'}</button>
+                        </form>
+                     </div>
+                     <div className="mt-12 max-w-2xl mx-auto">
+                        {error && <p className="text-center text-red-600 bg-red-100 p-3 rounded-md">{error}</p>}
+                        {resultado && <TituloResultCard resultado={resultado} />}
+                     </div>
+                 </div>
+            );
+        };
+        
+        const TituloResultCard = ({ resultado }) => {
+            const cardRef = useRef(null);
+            const qrRef = useRef(null);
+            
+            useEffect(() => {
+                if (qrRef.current && resultado) {
+                    qrRef.current.innerHTML = "";
+                    new QRCode(qrRef.current, { text: `https://utec.edu.co/verificacion?codigo=${resultado.numero}`, width: 128, height: 128, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
+                }
+            }, [resultado]);
+
+            const handleDownloadPDF = () => {
+                const { jsPDF } = window.jspdf;
+                const input = cardRef.current;
+                html2canvas(input, { scale: 2 }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(`Constancia-UTEC-${resultado.numero}.pdf`);
+                });
+            };
+
+            return (
+                <div ref={cardRef} className="bg-white rounded-xl shadow-2xl overflow-hidden border-t-8 border-green-500 p-8 relative">
+                    {/* --- CAMBIO: Sello de agua con opacidad aumentada --- */}
+                    <div className="absolute z-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <div className="w-64 h-64 rounded-full border-8 border-black opacity-20 flex items-center justify-center -rotate-12 pointer-events-none">
+                            <span className="font-bold text-5xl text-black">VERIFICADO</span>
+                        </div>
+                    </div>
+                    <div className="relative z-10">
+                         <div className="flex flex-col sm:flex-row justify-between items-start mb-6">
+                            <div>
+                                <h2 className="text-2xl font-bold text-green-600">Título Verificado</h2>
+                                <p className="text-sm text-gray-500">Estado: <span className="font-semibold text-green-700">{resultado.estado}</span></p>
+                            </div>
+                            <div className="text-sm text-gray-700 mt-4 sm:mt-0 sm:text-right">
+                                <p className="font-bold">{resultado.universidad}</p>
+                                <p>Fecha de grado: {resultado.fecha_grado_formateada}</p>
+                            </div>
+                         </div>
+                         <div className="bg-gray-50/80 backdrop-blur-sm p-6 rounded-lg">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                <div className="sm:col-span-2 space-y-4">
+                                    <div><label className="text-xs text-gray-500">Nombre Completo</label><p className="font-semibold text-lg">{resultado.nombre}</p></div>
+                                    {resultado.documento && (<div><label className="text-xs text-gray-500">Documento de Identidad</label><p className="font-semibold">{resultado.documento}</p></div>)}
+                                    <div><label className="text-xs text-gray-500">Programa Académico</label><p className="font-semibold">{resultado.programa}</p></div>
+                                    <div><label className="text-xs text-gray-500">Número de Verificación</label><p className="font-semibold">{resultado.numero}</p></div>
+                                </div>
+                                <div className="flex justify-center items-center"><div ref={qrRef}></div></div>
+                            </div>
+                            
+                            {/* --- CAMBIO: Se agregaron los datos de registro --- */}
+                            <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
+                                <div><label className="text-xs text-gray-500">Registro</label><p className="font-semibold">{resultado.registro}</p></div>
+                                <div><label className="text-xs text-gray-500">Libro</label><p className="font-semibold">{resultado.libro}</p></div>
+                                <div><label className="text-xs text-gray-500">Folio</label><p className="font-semibold">{resultado.folio}</p></div>
+                            </div>
+
+                             <div className="mt-6 pt-4 border-t"><label className="text-xs text-gray-500">Hash de Verificación (SHA-256)</label><p className="font-mono text-xs break-all text-gray-600">{resultado.hash}</p></div>
+                         </div>
+                         <div className="mt-8 flex justify-end"><button onClick={handleDownloadPDF} className="bg-[#8BC34A] text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 transition-colors">Descargar Constancia PDF</button></div>
+                    </div>
+                </div>
+            );
+        };
+        
+        const ContactoPage = () => {
+             useEffect(() => {
+                document.title = "Contacto | UTEC";
+                window.scrollTo(0, 0);
+            }, []);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                alert("Formulario enviado (simulación). Gracias por contactarnos.");
+                e.target.reset();
+            };
+
+            return (
+                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                     <h1 className="text-4xl font-bold text-center mb-4">Contáctanos</h1>
+                     <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">¿Tienes preguntas? Estamos aquí para ayudarte. Completa el formulario o utiliza nuestros otros canales de comunicación.</p>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                         <div className="bg-white p-8 rounded-lg shadow-md border">
+                            <h2 className="text-2xl font-bold mb-6">Envíanos un Mensaje</h2>
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div><label htmlFor="nombre" className="block text-sm font-medium text-gray-700">Nombre Completo</label><input type="text" id="nombre" name="nombre" required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#4FB0C6] focus:border-[#4FB0C6]" /></div>
+                                <div><label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo Electrónico</label><input type="email" id="email" name="email" required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#4FB0C6] focus:border-[#4FB0C6]" /></div>
+                                <div><label htmlFor="mensaje" className="block text-sm font-medium text-gray-700">Mensaje</label><textarea id="mensaje" name="mensaje" rows="4" required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#4FB0C6] focus:border-[#4FB0C6]"></textarea></div>
+                                <button type="submit" className="w-full bg-[#4FB0C6] text-white font-bold py-3 px-4 rounded-md hover:bg-[#3d8c9e] transition-colors">Enviar</button>
+                            </form>
+                         </div>
+                         <div className="bg-[#E8F6F9] p-8 rounded-lg">
+                             <h2 className="text-2xl font-bold mb-6">Información Institucional</h2>
+                             <div className="space-y-4 text-gray-700">
+                                {/* --- CAMBIO: Se actualizó la información de contacto --- */}
+                                <p><strong>Dirección:</strong> Carrera 15 # 88 - 35, Bogotá, Colombia</p>
+                                <p><strong>Teléfono:</strong> +57 (601) 333 1122</p>
+                                <p><strong>Email Admisiones:</strong> informacion@utec.edu.co</p>
+                                <p><strong>Horario de Atención:</strong> Lunes a Viernes de 8:00 a.m. a 5:00 p.m.</p>
+                             </div>
+                             <div className="mt-8 h-64 bg-gray-300 rounded-lg flex items-center justify-center"><p className="text-gray-500">Mapa (placeholder)</p></div>
+                         </div>
+                     </div>
+                 </div>
+            );
+        };
+        
+        // --- Main App Component (Router) ---
+
+        const App = () => {
+            const [route, setRoute] = useState(window.location.hash || '#/');
+
+            useEffect(() => {
+                const handleHashChange = () => { setRoute(window.location.hash || '#/'); };
+                window.addEventListener('hashchange', handleHashChange);
+                return () => window.removeEventListener('hashchange', handleHashChange);
+            }, []);
+
+            const renderPage = () => {
+                if (route.startsWith('#/carreras/')) {
+                    const slug = route.split('/')[2];
+                    return <CarreraDetallePage setRoute={setRoute} slug={slug} />;
+                }
+                const cleanRoute = route.split('?')[0];
+                switch (cleanRoute) {
+                    case '#/carreras': return <CarrerasPage setRoute={setRoute} />;
+                    case '#/admisiones': return <AdmisionesPage />;
+                    case '#/verificacion-titulos': return <VerificacionPage />;
+                    case '#/contacto': return <ContactoPage />;
+                    case '#/': default: return <HomePage setRoute={setRoute} />;
+                }
+            };
+            
+            return (
+                <div className="flex flex-col min-h-screen">
+                    <Header setRoute={setRoute} />
+                    <main className="flex-grow">{renderPage()}</main>
+                    <Footer />
+                </div>
+            );
+        };
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>
+
+
