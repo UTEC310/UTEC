@@ -1,4 +1,834 @@
 <!DOCTYPE html>
+<html lang="es" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTEC – Universidad Tecnológica de Colombia</title>
+    <meta name="description" content="UTEC – Universidad Tecnológica de Colombia. Formamos líderes en tecnología, innovación y futuro. Conoce nuestra oferta académica en ingenierías, tecnologías y posgrados.">
+    <meta name="keywords" content="UTEC, Universidad, Tecnología, Colombia, Ingeniería, Software, Industrial, Electrónica, Mecánica, Ambiental, Ciberseguridad, Proyectos, Analítica de Datos">
+    <link rel="icon" type="image/png" href="https://placehold.co/32x32/0B5ED7/FFFFFF?text=U">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Crypto-JS for SHA256 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <style>
+        :root {
+            --color-primary: #0B5ED7;
+            --color-secondary: #20C997;
+            --color-neutral: #6C757D;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .bg-primary { background-color: var(--color-primary); }
+        .text-primary { color: var(--color-primary); }
+        .border-primary { border-color: var(--color-primary); }
+        .bg-secondary { background-color: var(--color-secondary); }
+        .text-secondary { color: var(--color-secondary); }
+        .border-secondary { border-color: var(--color-secondary); }
+        .bg-neutral { background-color: var(--color-neutral); }
+        .text-neutral { color: var(--color-neutral); }
+        
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .nav-link.active {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+        .dark .nav-link.active {
+            color: var(--color-secondary);
+        }
+        .pensum-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+        .floating-action {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Header -->
+    <header id="header" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#inicio" class="flex items-center space-x-2">
+                <!-- REEMPLAZAR CON assets/utec-logo.png -->
+                <img src="https://raw.githubusercontent.com/user-attachments/assets/59352e89-1361-468e-9c24-4f4c107198e3/1000195288.png" alt="Logo UTEC" class="h-12 w-auto">
+            </a>
+
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="#inicio" class="nav-link hover:text-primary dark:hover:text-secondary transition-colors">Inicio</a>
+                <a href="#programas" class="nav-link hover:text-primary dark:hover:text-secondary transition-colors">Oferta Académica</a>
+                <a href="#admisiones" class="nav-link hover:text-primary dark:hover:text-secondary transition-colors">Admisiones</a>
+                <a href="#verificacion" class="nav-link hover:text-primary dark:hover:text-secondary transition-colors">Verificar Título</a>
+                <a href="#contacto" class="nav-link hover:text-primary dark:hover:text-secondary transition-colors">Contacto</a>
+                <a href="#transparencia" class="nav-link hover:text-primary dark:hover:text-secondary transition-colors">Transparencia</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <i data-feather="sun" class="block dark:hidden"></i>
+                    <i data-feather="moon" class="hidden dark:block"></i>
+                </button>
+                <a href="#admisiones" class="hidden sm:inline-block bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-transform duration-300 hover:scale-105">
+                    Postúlate ahora
+                </a>
+                <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i data-feather="menu"></i>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden px-6 pb-4 flex flex-col space-y-4">
+            <a href="#inicio" class="nav-link block text-center py-2">Inicio</a>
+            <a href="#programas" class="nav-link block text-center py-2">Oferta Académica</a>
+            <a href="#admisiones" class="nav-link block text-center py-2">Admisiones</a>
+            <a href="#verificacion" class="nav-link block text-center py-2">Verificar Título</a>
+            <a href="#contacto" class="nav-link block text-center py-2">Contacto</a>
+            <a href="#transparencia" class="nav-link block text-center py-2">Transparencia</a>
+             <a href="#admisiones" class="w-full text-center bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-transform duration-300 hover:scale-105">
+                Postúlate ahora
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+        <!-- SECTIONS CONTAINER -->
+        <div id="app-container">
+            <!-- PÁGINA DE INICIO -->
+            <section id="inicio" class="section">
+                <!-- Hero Section -->
+                <div class="text-center py-16 md:py-24">
+                    <!-- REEMPLAZAR CON assets/utec-logo.png -->
+                    <img src="https://raw.githubusercontent.com/user-attachments/assets/59352e89-1361-468e-9c24-4f4c107198e3/1000195288.png" alt="Logo UTEC Grande" class="h-32 md:h-48 mx-auto mb-6">
+                    <h1 class="text-4xl md:text-6xl font-extrabold text-primary dark:text-secondary">UTEC</h1>
+                    <p class="text-xl md:text-2xl mt-4 font-light text-neutral dark:text-gray-400">Tecnología, Innovación y Futuro</p>
+                    <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+                        <a href="#programas" class="bg-primary text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-700 transition-transform duration-300 hover:scale-105 w-full sm:w-auto">Explorar Carreras</a>
+                        <a href="#verificacion" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-transform duration-300 hover:scale-105 w-full sm:w-auto">Verificar Título</a>
+                    </div>
+                </div>
+
+                <!-- ¿Por qué elegir UTEC? -->
+                <div class="py-16">
+                    <h2 class="text-3xl font-bold text-center mb-12">¿Por Qué Elegir UTEC?</h2>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300">
+                            <div class="inline-block bg-primary/10 dark:bg-secondary/10 p-4 rounded-full mb-4">
+                               <i data-feather="cpu" class="h-10 w-10 text-primary dark:text-secondary"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Innovación Constante</h3>
+                            <p class="text-neutral dark:text-gray-400">Programas a la vanguardia de las últimas tendencias tecnológicas y del mercado global.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300">
+                             <div class="inline-block bg-primary/10 dark:bg-secondary/10 p-4 rounded-full mb-4">
+                               <i data-feather="layers" class="h-10 w-10 text-primary dark:text-secondary"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Tecnología Aplicada</h3>
+                            <p class="text-neutral dark:text-gray-400">Aprende haciendo en laboratorios de última generación y con proyectos del mundo real.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg text-center transform hover:-translate-y-2 transition-transform duration-300">
+                             <div class="inline-block bg-primary/10 dark:bg-secondary/10 p-4 rounded-full mb-4">
+                               <i data-feather="search" class="h-10 w-10 text-primary dark:text-secondary"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Investigación con Impacto</h3>
+                            <p class="text-neutral dark:text-gray-400">Participa en proyectos de investigación que solucionan problemas reales de la industria y la sociedad.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Noticias y Novedades -->
+                <div class="py-16">
+                    <h2 class="text-3xl font-bold text-center mb-12">Noticias y Novedades</h2>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Noticia 1 -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+                            <img src="https://placehold.co/600x400/0B5ED7/FFFFFF?text=Evento" alt="Hackathon UTEC" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <p class="text-sm text-neutral dark:text-gray-400 mb-1">05 SEP 2025</p>
+                                <h3 class="font-bold text-lg mb-2">UTEC organiza la 5ta Hackathon Nacional de Ciberseguridad</h3>
+                                <p class="text-sm mb-4">Estudiantes de todo el país competirán para resolver desafíos de seguridad digital.</p>
+                                <a href="#" class="font-semibold text-primary dark:text-secondary hover:underline">Leer más &rarr;</a>
+                            </div>
+                        </div>
+                        <!-- Noticia 2 -->
+                         <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+                            <img src="https://placehold.co/600x400/20C997/FFFFFF?text=Investigación" alt="Proyecto de Sostenibilidad" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <p class="text-sm text-neutral dark:text-gray-400 mb-1">28 AGO 2025</p>
+                                <h3 class="font-bold text-lg mb-2">Nuevo laboratorio de Sostenibilidad y Energías Renovables</h3>
+                                <p class="text-sm mb-4">Ingeniería Ambiental lidera un proyecto para la optimización de recursos hídricos.</p>
+                                <a href="#" class="font-semibold text-primary dark:text-secondary hover:underline">Leer más &rarr;</a>
+                            </div>
+                        </div>
+                        <!-- Noticia 3 -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+                            <img src="https://placehold.co/600x400/6C757D/FFFFFF?text=Convenio" alt="Alianza internacional" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <p class="text-sm text-neutral dark:text-gray-400 mb-1">15 AGO 2025</p>
+                                <h3 class="font-bold text-lg mb-2">Alianza estratégica con el MIT para programas de IA</h3>
+                                <p class="text-sm mb-4">Nuestros estudiantes de maestría tendrán acceso a cursos y mentores del MIT.</p>
+                                <a href="#" class="font-semibold text-primary dark:text-secondary hover:underline">Leer más &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="bg-primary dark:bg-secondary text-white my-16 p-12 rounded-2xl text-center shadow-2xl">
+                    <h2 class="text-3xl font-extrabold mb-4">¿Listo para construir tu futuro?</h2>
+                    <p class="text-lg mb-8 max-w-2xl mx-auto">Únete a una comunidad de innovadores y transforma tu pasión por la tecnología en una carrera exitosa.</p>
+                    <a href="#admisiones" class="bg-white text-primary dark:text-secondary dark:bg-gray-900 font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-100 transition-transform duration-300 hover:scale-105 inline-block floating-action">
+                        ¡Postúlate Ahora!
+                    </a>
+                </div>
+            </section>
+
+            <!-- OFERTA ACADÉMICA -->
+            <section id="programas" class="section">
+                 <div id="programs-list-view">
+                    <h2 class="text-4xl font-bold text-center mb-4">Oferta Académica</h2>
+                    <p class="text-center text-lg text-neutral dark:text-gray-400 mb-12">Explora nuestros programas y encuentra tu camino hacia el éxito profesional.</p>
+
+                    <div class="flex flex-wrap justify-center gap-4 mb-12">
+                         <button data-filter="all" class="filter-btn bg-primary text-white py-2 px-4 rounded-lg">Todos</button>
+                         <button data-filter="ingenieria" class="filter-btn bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-lg">Ingenierías</button>
+                         <button data-filter="tecnologia" class="filter-btn bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-lg">Tecnologías</button>
+                         <button data-filter="posgrado" class="filter-btn bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-lg">Posgrados</button>
+                    </div>
+
+                    <div id="programs-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Program cards will be injected here by JS -->
+                    </div>
+                 </div>
+
+                 <div id="program-detail-view" class="hidden">
+                     <!-- Program detail will be injected here by JS -->
+                 </div>
+            </section>
+
+            <!-- ADMISIONES -->
+            <section id="admisiones" class="section">
+                <h2 class="text-4xl font-bold text-center mb-12">Proceso de Admisión</h2>
+                <div class="max-w-4xl mx-auto">
+                    <!-- Pasos -->
+                    <div class="grid md:grid-cols-2 gap-8 mb-16">
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
+                            <h3 class="text-2xl font-bold text-primary dark:text-secondary mb-4">Paso 1: Diligencia el Formulario</h3>
+                            <p>Completa el formulario de preinscripción en línea con tus datos personales y el programa de tu interés. Es el primer paso para unirte a UTEC.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
+                            <h3 class="text-2xl font-bold text-primary dark:text-secondary mb-4">Paso 2: Presenta los Documentos</h3>
+                            <p>Adjunta los documentos requeridos: copia de tu documento de identidad, resultados de pruebas de estado y diploma de bachiller.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
+                            <h3 class="text-2xl font-bold text-primary dark:text-secondary mb-4">Paso 3: Entrevista y Pruebas</h3>
+                            <p>Dependiendo del programa, serás citado a una entrevista y/o pruebas específicas para evaluar tus aptitudes y conocimientos.</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow">
+                            <h3 class="text-2xl font-bold text-primary dark:text-secondary mb-4">Paso 4: Legaliza tu Matrícula</h3>
+                            <p>Una vez admitido, recibirás la orden de matrícula. Realiza el pago y entrega los documentos finales para oficializar tu cupo.</p>
+                        </div>
+                    </div>
+
+                    <!-- Formulario -->
+                    <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+                        <h3 class="text-3xl font-bold text-center mb-6">Formulario de Preinscripción</h3>
+                        <form id="admission-form">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="nombre-admision" class="block mb-2 font-semibold">Nombre Completo</label>
+                                    <input type="text" id="nombre-admision" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required>
+                                </div>
+                                <div>
+                                    <label for="email-admision" class="block mb-2 font-semibold">Correo Electrónico</label>
+                                    <input type="email" id="email-admision" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required>
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                 <label for="programa-admision" class="block mb-2 font-semibold">Programa de Interés</label>
+                                 <select id="programa-admision" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required>
+                                     <option value="">Selecciona un programa...</option>
+                                     <!-- Options will be populated by JS -->
+                                 </select>
+                            </div>
+                            <div class="mt-8 text-center">
+                                <button type="submit" class="bg-primary text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-700 transition-transform duration-300 hover:scale-105">Enviar Preinscripción</button>
+                            </div>
+                        </form>
+                         <div id="admission-form-feedback" class="mt-6 text-center"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VERIFICACIÓN DE TÍTULOS -->
+            <section id="verificacion" class="section">
+                <h2 class="text-4xl font-bold text-center mb-4">Verificación de Títulos</h2>
+                <p class="text-center text-lg text-neutral dark:text-gray-400 mb-12">Consulta la validez de los títulos expedidos por UTEC.</p>
+                <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+                    <form id="verification-form">
+                        <label for="search-verification" class="block mb-2 font-semibold">Buscar por documento, nombre o código</label>
+                        <div class="flex gap-2">
+                             <input type="text" id="search-verification" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required>
+                             <button type="submit" class="bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                                 <i data-feather="search" class="h-6 w-6"></i>
+                             </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="verification-result" class="max-w-4xl mx-auto mt-12">
+                    <!-- Result will be injected here -->
+                </div>
+            </section>
+
+            <!-- CONTACTO -->
+            <section id="contacto" class="section">
+                 <h2 class="text-4xl font-bold text-center mb-12">Contáctanos</h2>
+                 <div class="grid md:grid-cols-2 gap-12 items-start">
+                     <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+                        <h3 class="text-3xl font-bold text-center mb-6">Envíanos un Mensaje</h3>
+                        <form id="contact-form">
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="nombre-contacto" class="block mb-2 font-semibold">Nombre Completo</label>
+                                    <input type="text" id="nombre-contacto" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required>
+                                </div>
+                                 <div>
+                                    <label for="email-contacto" class="block mb-2 font-semibold">Correo Electrónico</label>
+                                    <input type="email" id="email-contacto" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required>
+                                </div>
+                                <div>
+                                    <label for="asunto-contacto" class="block mb-2 font-semibold">Asunto</label>
+                                    <input type="text" id="asunto-contacto" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required>
+                                </div>
+                                <div>
+                                    <label for="mensaje-contacto" class="block mb-2 font-semibold">Mensaje</label>
+                                    <textarea id="mensaje-contacto" rows="5" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border focus:border-primary focus:ring-primary" required></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="bg-primary text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-700 transition-transform duration-300 hover:scale-105">Enviar Mensaje</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="contact-form-feedback" class="mt-6 text-center"></div>
+                     </div>
+                     <div class="space-y-8">
+                         <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow flex items-start gap-4">
+                              <i data-feather="mail" class="h-8 w-8 text-primary dark:text-secondary mt-1"></i>
+                              <div>
+                                 <h4 class="text-xl font-bold">Correo Electrónico</h4>
+                                 <p class="text-neutral dark:text-gray-400">Para consultas generales, admisiones y soporte.</p>
+                                 <a href="mailto:contacto@utec.edu.co" class="text-primary dark:text-secondary font-semibold hover:underline">contacto@utec.edu.co</a>
+                              </div>
+                         </div>
+                         <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow flex items-start gap-4">
+                              <i data-feather="phone" class="h-8 w-8 text-primary dark:text-secondary mt-1"></i>
+                              <div>
+                                 <h4 class="text-xl font-bold">Líneas Telefónicas</h4>
+                                 <p class="text-neutral dark:text-gray-400">Atención de lunes a viernes de 8:00 a.m. a 6:00 p.m.</p>
+                                 <p class="font-semibold">+57 300 000 0000</p>
+                                 <p class="font-semibold">+34 613 366 454 (Internacional)</p>
+                              </div>
+                         </div>
+                         <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow flex items-start gap-4">
+                              <i data-feather="map-pin" class="h-8 w-8 text-primary dark:text-secondary mt-1"></i>
+                              <div>
+                                 <h4 class="text-xl font-bold">Sede Principal</h4>
+                                 <p class="text-neutral dark:text-gray-400">Visítanos en nuestro campus tecnológico.</p>
+                                 <p class="font-semibold">Calle Falsa 123, Bogotá, Colombia</p>
+                              </div>
+                         </div>
+                     </div>
+                 </div>
+            </section>
+
+            <!-- TRANSPARENCIA -->
+            <section id="transparencia" class="section">
+                <h2 class="text-4xl font-bold text-center mb-12">Transparencia y Documentos</h2>
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-bold">Reglamento Estudiantil</h3>
+                            <p class="text-neutral dark:text-gray-400 text-sm">Derechos, deberes y normativas académicas.</p>
+                        </div>
+                        <a href="#" class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                           <i data-feather="download"></i> PDF
+                        </a>
+                    </div>
+                     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-bold">Política de Privacidad y Datos</h3>
+                            <p class="text-neutral dark:text-gray-400 text-sm">Compromiso con la protección de tu información.</p>
+                        </div>
+                        <a href="#" class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                           <i data-feather="download"></i> PDF
+                        </a>
+                    </div>
+                     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-bold">Política de Accesibilidad Web</h3>
+                            <p class="text-neutral dark:text-gray-400 text-sm">Garantizando un sitio inclusivo para todos.</p>
+                        </div>
+                        <a href="#" class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                           <i data-feather="download"></i> PDF
+                        </a>
+                    </div>
+                     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-bold">Informe de Gestión Anual</h3>
+                            <p class="text-neutral dark:text-gray-400 text-sm">Resultados y avances del último periodo académico.</p>
+                        </div>
+                        <a href="#" class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                           <i data-feather="download"></i> PDF
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div class="container mx-auto px-6 py-8">
+            <div class="grid md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <!-- REEMPLAZAR CON assets/utec-logo.png -->
+                    <img src="https://raw.githubusercontent.com/user-attachments/assets/59352e89-1361-468e-9c24-4f4c107198e3/1000195288.png" alt="Logo UTEC" class="h-16 mx-auto md:mx-0 mb-4">
+                    <p class="text-neutral dark:text-gray-400">Tecnología, Innovación y Futuro.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#programas" class="hover:underline text-neutral dark:text-gray-400">Oferta Académica</a></li>
+                        <li><a href="#admisiones" class="hover:underline text-neutral dark:text-gray-400">Calendario Académico</a></li>
+                        <li><a href="#verificacion" class="hover:underline text-neutral dark:text-gray-400">Verificar Título</a></li>
+                        <li><a href="#contacto" class="hover:underline text-neutral dark:text-gray-400">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Síguenos</h4>
+                     <div class="flex justify-center md:justify-start space-x-4">
+                        <a href="#" class="text-neutral hover:text-primary dark:hover:text-secondary"><i data-feather="facebook" class="h-6 w-6"></i></a>
+                        <a href="#" class="text-neutral hover:text-primary dark:hover:text-secondary"><i data-feather="twitter" class="h-6 w-6"></i></a>
+                        <a href="#" class="text-neutral hover:text-primary dark:hover:text-secondary"><i data-feather="instagram" class="h-6 w-6"></i></a>
+                        <a href="#" class="text-neutral hover:text-primary dark:hover:text-secondary"><i data-feather="linkedin" class="h-6 w-6"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center text-neutral dark:text-gray-500 mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <p>&copy; 2025 UTEC – Universidad Tecnológica de Colombia. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATABASE & API SIMULATION ---
+        const AppData = {
+            programs: [
+                // Ingenierías
+                { id: 1, name: "Ingeniería Industrial", level: 'Pregrado', area: 'ingenieria', modality: 'Presencial', duration: 10, credits: 165, summary: 'Formamos líderes en la optimización de procesos productivos, logísticos y de calidad, con un fuerte enfoque en sostenibilidad y analítica de datos.', emphasis: ['Producción', 'Logística', 'Calidad', 'Proyectos', 'Mejora Continua', 'Sostenibilidad', 'Analítica de Datos'] },
+                { id: 2, name: "Ingeniería de Sistemas y Software", level: 'Pregrado', area: 'ingenieria', modality: 'Presencial/Virtual', duration: 10, credits: 160, summary: 'Diseña, desarrolla e implementa soluciones de software innovadoras para los desafíos del mundo digital.', emphasis: ['Desarrollo Full-Stack', 'Inteligencia Artificial', 'Cloud Computing', 'Ciberseguridad'] },
+                { id: 3, name: "Ingeniería Electrónica", level: 'Pregrado', area: 'ingenieria', modality: 'Presencial', duration: 10, credits: 162, summary: 'Crea y gestiona sistemas electrónicos en áreas como telecomunicaciones, control y automatización.', emphasis: ['Telecomunicaciones', 'Sistemas Embebidos', 'IoT', 'Robótica'] },
+                { id: 4, name: "Ingeniería Mecánica", level: 'Pregrado', area: 'ingenieria', modality: 'Presencial', duration: 10, credits: 168, summary: 'Lidera el diseño y la fabricación de sistemas mecánicos, desde maquinaria industrial hasta soluciones energéticas.', emphasis: ['Diseño Mecánico (CAD/CAM)', 'Termofluidos', 'Energías Renovables', 'Mantenimiento Industrial'] },
+                { id: 5, name: "Ingeniería Ambiental", level: 'Pregrado', area: 'ingenieria', modality: 'Presencial', duration: 10, credits: 155, summary: 'Desarrolla soluciones sostenibles para prevenir y mitigar el impacto ambiental de las actividades humanas.', emphasis: ['Gestión de Residuos', 'Tratamiento de Aguas', 'Evaluación de Impacto Ambiental', 'Legislación Ambiental'] },
+                // Tecnologías
+                { id: 6, name: "Desarrollo de Software", level: 'Tecnología', area: 'tecnologia', modality: 'Virtual', duration: 6, credits: 96, summary: 'Conviértete en un desarrollador de software con habilidades prácticas en las tecnologías más demandadas.', emphasis: ['Desarrollo Web y Móvil', 'Bases de Datos', 'Metodologías Ágiles (Scrum)'] },
+                { id: 7, name: "Redes y Ciberseguridad", level: 'Tecnología', area: 'tecnologia', modality: 'Presencial/Virtual', duration: 6, credits: 98, summary: 'Administra infraestructuras de red y protege los sistemas de información contra amenazas cibernéticas.', emphasis: ['Administración de Redes (Cisco)', 'Ethical Hacking', 'Análisis Forense Digital'] },
+                { id: 8, name: "Automatización y Control", level: 'Tecnología', area: 'tecnologia', modality: 'Presencial', duration: 6, credits: 102, summary: 'Implementa y mantiene sistemas de control automático para optimizar procesos industriales.', emphasis: ['PLC y HMI', 'Robótica Industrial', 'Sistemas SCADA'] },
+                { id: 9, name: "Logística Integral", level: 'Tecnología', area: 'tecnologia', modality: 'Virtual', duration: 6, credits: 95, summary: 'Gestiona eficientemente la cadena de suministro, desde el aprovisionamiento hasta la distribución final.', emphasis: ['Gestión de Inventarios', 'Transporte y Distribución', 'Logística Internacional'] },
+                { id: 10, name: "Gestión de Calidad", level: 'Tecnología', area: 'tecnologia', modality: 'Virtual', duration: 6, credits: 94, summary: 'Implementa y audita sistemas de gestión de calidad basados en normas internacionales como ISO 9001.', emphasis: ['Norma ISO 9001', 'Control Estadístico de Procesos', 'Auditoría Interna'] },
+                { id: 11, name: "Seguridad y Salud en el Trabajo", level: 'Tecnología', area: 'tecnologia', modality: 'Presencial', duration: 6, credits: 100, summary: 'Diseña e implementa sistemas para prevenir riesgos laborales y promover ambientes de trabajo seguros.', emphasis: ['Identificación de Peligros', 'Legislación en SST', 'Sistemas de Gestión SG-SST'] },
+                // Posgrados
+                { id: 12, name: "Especialización en Gerencia de Proyectos", level: 'Posgrado', area: 'posgrado', modality: 'Virtual', duration: 2, credits: 24, summary: 'Lidera proyectos complejos bajo estándares internacionales del PMI, garantizando su éxito en alcance, tiempo y costo.', emphasis: ['Metodología PMBOK', 'Gestión de Riesgos', 'Proyectos Ágiles'] },
+                { id: 13, name: "Maestría en Analítica de Datos", level: 'Posgrado', area: 'posgrado', modality: 'Virtual', duration: 4, credits: 48, summary: 'Transforma grandes volúmenes de datos en información estratégica para la toma de decisiones empresariales.', emphasis: ['Machine Learning', 'Big Data', 'Visualización de Datos (Tableau/PowerBI)'] },
+            ],
+            pensums: {
+                1: [ // Ing Industrial
+                    { semestre: 1, asignaturas: [{ n: 'Cálculo Diferencial', c: 4 }, { n: 'Álgebra Lineal', c: 3 }, { n: 'Química General', c: 3 }, { n: 'Introducción a la Ingeniería', c: 2 }, { n: 'Comunicación', c: 2 }] },
+                    { semestre: 2, asignaturas: [{ n: 'Cálculo Integral', c: 4 }, { n: 'Física Mecánica', c: 4 }, { n: 'Dibujo de Ingeniería', c: 2 }, { n: 'Algoritmia y Programación', c: 3 }] },
+                    // ... (resto de semestres)
+                    { semestre: 10, asignaturas: [{ n: 'Práctica Profesional', c: 8 }, { n: 'Trabajo de Grado', c: 6 }, { n: 'Electiva Profesional IV', c: 3 }] }
+                ],
+                // ... (más pensums para otras carreras)
+            },
+            verificationData: [
+                {
+                    nombre: "Samuel Felipe Rendón Bernal",
+                    documento: "1113642471",
+                    programa: "Ingeniería Industrial",
+                    estado: "Graduado",
+                    fecha_grado: "20 de diciembre de 2011",
+                    codigo_verificacion: "SM2471", // <-- CÓDIGO ACTUALIZADO
+                    get hash() {
+                        return CryptoJS.SHA256(this.nombre + this.documento + this.programa + this.fecha_grado + this.codigo_verificacion).toString();
+                    }
+                }
+            ]
+        };
+
+        // --- APPLICATION LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = {
+                // Elements
+                sections: document.querySelectorAll('.section'),
+                navLinks: document.querySelectorAll('.nav-link'),
+                themeToggleButton: document.getElementById('theme-toggle'),
+                mobileMenuButton: document.getElementById('mobile-menu-button'),
+                mobileMenu: document.getElementById('mobile-menu'),
+                
+                // Programs Page
+                programsGrid: document.getElementById('programs-grid'),
+                filterButtons: document.querySelectorAll('.filter-btn'),
+                programsListView: document.getElementById('programs-list-view'),
+                programDetailView: document.getElementById('program-detail-view'),
+                
+                // Forms
+                admissionForm: document.getElementById('admission-form'),
+                admissionFormFeedback: document.getElementById('admission-form-feedback'),
+                programAdmissionSelect: document.getElementById('programa-admision'),
+                contactForm: document.getElementById('contact-form'),
+                contactFormFeedback: document.getElementById('contact-form-feedback'),
+
+                // Verification Page
+                verificationForm: document.getElementById('verification-form'),
+                verificationSearchInput: document.getElementById('search-verification'),
+                verificationResultContainer: document.getElementById('verification-result'),
+
+                init() {
+                    this.initTheme();
+                    this.initRouting();
+                    this.initMobileMenu();
+                    this.populatePrograms();
+                    this.populateAdmissionPrograms();
+                    this.addEventListeners();
+                    feather.replace(); // Init icons
+                },
+                
+                addEventListeners() {
+                    this.themeToggleButton.addEventListener('click', () => this.toggleTheme());
+                    window.addEventListener('hashchange', () => this.handleRouteChange());
+
+                    this.filterButtons.forEach(button => {
+                        button.addEventListener('click', (e) => this.filterPrograms(e));
+                    });
+                    
+                    this.programsGrid.addEventListener('click', (e) => {
+                        const card = e.target.closest('.program-card');
+                        if (card && card.dataset.id) {
+                            window.location.hash = `programas/${card.dataset.id}`;
+                        }
+                    });
+
+                    this.admissionForm.addEventListener('submit', (e) => this.handleAdmissionSubmit(e));
+                    this.contactForm.addEventListener('submit', (e) => this.handleContactSubmit(e));
+                    this.verificationForm.addEventListener('submit', (e) => this.handleVerificationSearch(e));
+                },
+                
+                // --- Routing ---
+                initRouting() {
+                    const hash = window.location.hash || '#inicio';
+                     if(hash.startsWith('#programas/')) {
+                         this.showProgramDetail(hash.split('/')[1]);
+                     } else {
+                        this.showSection(hash);
+                     }
+                    this.updateActiveNavLink(hash);
+                },
+
+                handleRouteChange() {
+                    const hash = window.location.hash;
+                    if (hash.startsWith('#programas/')) {
+                        const programId = hash.split('/')[1];
+                        this.showProgramDetail(programId);
+                    } else {
+                        this.showSection(hash || '#inicio');
+                        this.programsListView.style.display = 'block';
+                        this.programDetailView.style.display = 'none';
+                    }
+                    this.updateActiveNavLink(hash);
+                },
+
+                showSection(hash) {
+                    this.sections.forEach(section => {
+                        if (`#${section.id}` === hash) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+                     // Scroll to top of section
+                    window.scrollTo(0, 0);
+                },
+                
+                updateActiveNavLink(currentHash) {
+                    this.navLinks.forEach(link => {
+                        const linkHash = new URL(link.href).hash;
+                        if (linkHash === currentHash || (currentHash.startsWith('#programas') && linkHash === '#programas')) {
+                           link.classList.add('active');
+                        } else {
+                           link.classList.remove('active');
+                        }
+                    });
+                },
+
+                // --- Theme ---
+                initTheme() {
+                    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                },
+                
+                toggleTheme() {
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                },
+                
+                // --- Mobile Menu ---
+                initMobileMenu() {
+                    this.mobileMenuButton.addEventListener('click', () => {
+                        this.mobileMenu.classList.toggle('hidden');
+                    });
+                    this.mobileMenu.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'A') {
+                            this.mobileMenu.classList.add('hidden');
+                        }
+                    });
+                },
+                
+                // --- Programs Logic ---
+                populatePrograms(filter = 'all') {
+                    this.programsGrid.innerHTML = '';
+                    const filteredPrograms = AppData.programs.filter(p => filter === 'all' || p.area === filter);
+                    
+                    filteredPrograms.forEach(program => {
+                        const card = `
+                            <div class="program-card bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 cursor-pointer transform hover:-translate-y-2 transition-transform duration-300" data-id="${program.id}">
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start">
+                                        <span class="inline-block bg-${program.area === 'posgrado' ? 'secondary' : 'primary'}/10 text-${program.area === 'posgrado' ? 'secondary' : 'primary'} text-xs font-semibold px-2.5 py-0.5 rounded-full">${program.level}</span>
+                                        <span class="text-sm text-neutral dark:text-gray-400">${program.modality}</span>
+                                    </div>
+                                    <h3 class="font-bold text-xl my-3">${program.name}</h3>
+                                    <p class="text-sm text-neutral dark:text-gray-400 mb-4 h-20">${program.summary}</p>
+                                    <div class="flex justify-between items-center text-sm font-medium">
+                                        <span><i data-feather="clock" class="inline-block h-4 w-4 mr-1"></i> ${program.duration} Semestres</span>
+                                        <span><i data-feather="bar-chart-2" class="inline-block h-4 w-4 mr-1"></i> ${program.credits} Créditos</span>
+                                    </div>
+                                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
+                                       <a href="#programas/${program.id}" class="font-bold text-primary dark:text-secondary">Ver más detalles &rarr;</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        this.programsGrid.insertAdjacentHTML('beforeend', card);
+                    });
+                    feather.replace();
+                },
+
+                filterPrograms(e) {
+                    const filter = e.target.dataset.filter;
+                    this.filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('bg-gray-200', 'dark:bg-gray-700');
+                    });
+                    e.target.classList.add('bg-primary', 'text-white');
+                    e.target.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                    this.populatePrograms(filter);
+                },
+
+                showProgramDetail(programId) {
+                    const id = parseInt(programId);
+                    const program = AppData.programs.find(p => p.id === id);
+
+                    if (!program) {
+                        window.location.hash = '#programas';
+                        return;
+                    }
+                    
+                    const pensum = AppData.pensums[id] || [];
+                    const detailHTML = `
+                        <div class="max-w-5xl mx-auto">
+                           <button onclick="window.location.hash='#programas'" class="mb-8 flex items-center gap-2 text-primary dark:text-secondary font-semibold hover:underline">
+                               <i data-feather="arrow-left"></i> Volver a la Oferta Académica
+                           </button>
+                           <h2 class="text-4xl font-extrabold mb-2">${program.name}</h2>
+                           <div class="flex flex-wrap gap-x-4 gap-y-2 mb-6 text-neutral dark:text-gray-400">
+                               <span><i data-feather="tag" class="inline h-4"></i> ${program.level}</span>
+                               <span><i data-feather="map-pin" class="inline h-4"></i> ${program.modality}</span>
+                               <span><i data-feather="clock" class="inline h-4"></i> ${program.duration} Semestres</span>
+                               <span><i data-feather="bar-chart-2" class="inline h-4"></i> ${program.credits} Créditos</span>
+                           </div>
+                           
+                           <div class="grid lg:grid-cols-3 gap-8">
+                               <div class="lg:col-span-2 space-y-8">
+                                   <div>
+                                       <h3 class="text-2xl font-bold mb-3">Objetivo del Programa</h3>
+                                       <p>${program.summary}</p>
+                                   </div>
+                                    <div>
+                                       <h3 class="text-2xl font-bold mb-3">Perfil Profesional</h3>
+                                       <p>El egresado de ${program.name} estará en capacidad de liderar, diseñar, implementar y gestionar soluciones innovadoras en su campo, aplicando tecnologías de vanguardia y metodologías ágiles para resolver problemas complejos en organizaciones de cualquier sector.</p>
+                                   </div>
+                                   <div>
+                                       <h3 class="text-2xl font-bold mb-3">Pensum Detallado</h3>
+                                       <div class="pensum-grid">
+                                           ${pensum.length > 0 ? pensum.map(sem => `
+                                               <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                                                   <h4 class="font-bold mb-2">Semestre ${sem.semestre}</h4>
+                                                   <ul class="text-sm list-disc list-inside">
+                                                       ${sem.asignaturas.map(asig => `<li>${asig.n} (${asig.c} créd.)</li>`).join('')}
+                                                   </ul>
+                                               </div>
+                                           `).join('') : '<p>El pensum detallado estará disponible próximamente.</p>'}
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="space-y-6">
+                                    <div class="bg-primary/5 dark:bg-secondary/5 p-6 rounded-lg border border-primary/20 dark:border-secondary/20">
+                                        <h3 class="text-xl font-bold mb-3">Campo Laboral</h3>
+                                        <ul class="space-y-2 list-disc list-inside">
+                                            ${program.emphasis.map(e => `<li>${e}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    <a href="#admisiones" class="w-full text-center bg-primary hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-transform duration-300 hover:scale-105 inline-block">
+                                        Inscríbete en este programa
+                                    </a>
+                               </div>
+                           </div>
+                        </div>
+                    `;
+                    this.programDetailView.innerHTML = detailHTML;
+                    this.showSection('#programas');
+                    this.programsListView.style.display = 'none';
+                    this.programDetailView.style.display = 'block';
+                    feather.replace();
+                },
+
+                // --- Forms Logic ---
+                populateAdmissionPrograms() {
+                     AppData.programs.forEach(program => {
+                         const option = document.createElement('option');
+                         option.value = program.id;
+                         option.textContent = `${program.level}: ${program.name}`;
+                         this.programAdmissionSelect.appendChild(option);
+                     });
+                },
+
+                handleAdmissionSubmit(e) {
+                    e.preventDefault();
+                    this.admissionFormFeedback.innerHTML = `<p class="text-green-600 dark:text-green-400 font-semibold">¡Gracias! Hemos recibido tu preinscripción. Pronto nos pondremos en contacto contigo.</p>`;
+                    this.admissionForm.reset();
+                    setTimeout(() => this.admissionFormFeedback.innerHTML = '', 5000);
+                },
+
+                handleContactSubmit(e) {
+                    e.preventDefault();
+                    this.contactFormFeedback.innerHTML = `<p class="text-green-600 dark:text-green-400 font-semibold">Mensaje enviado con éxito. Gracias por contactarnos.</p>`;
+                    this.contactForm.reset();
+                    setTimeout(() => this.contactFormFeedback.innerHTML = '', 5000);
+                },
+
+                // --- Verification Logic ---
+                handleVerificationSearch(e) {
+                    e.preventDefault();
+                    const searchTerm = this.verificationSearchInput.value.trim().toLowerCase();
+                    this.verificationResultContainer.innerHTML = '';
+                    
+                    if (!searchTerm) {
+                        this.showVerificationFeedback('Por favor, ingresa un término de búsqueda.', 'error');
+                        return;
+                    }
+
+                    const result = AppData.verificationData.find(record =>
+                        record.documento.toLowerCase().includes(searchTerm) ||
+                        record.nombre.toLowerCase().includes(searchTerm) ||
+                        record.codigo_verificacion.toLowerCase().includes(searchTerm)
+                    );
+
+                    if (result) {
+                        this.renderVerificationResult(result);
+                    } else {
+                        this.showVerificationFeedback('No se encontraron registros que coincidan con la búsqueda.', 'not-found');
+                    }
+                },
+                
+                showVerificationFeedback(message, type) {
+                    const colorClass = type === 'error' ? 'red' : 'yellow';
+                    this.verificationResultContainer.innerHTML = `
+                        <div class="bg-${colorClass}-100 dark:bg-${colorClass}-900/50 border-l-4 border-${colorClass}-500 text-${colorClass}-700 dark:text-${colorClass}-300 p-4 rounded-r-lg" role="alert">
+                            <p class="font-bold">${type === 'error' ? 'Error' : 'Información'}</p>
+                            <p>${message}</p>
+                        </div>
+                    `;
+                },
+
+                renderVerificationResult(record) {
+                    const resultHTML = `
+                        <div class="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 p-6 md:p-8 rounded-lg shadow-lg">
+                            <div class="flex items-center gap-4 mb-4">
+                               <i data-feather="check-circle" class="h-10 w-10 text-green-500"></i>
+                               <h3 class="text-2xl font-bold text-green-800 dark:text-green-300">Título Verificado</h3>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                                <div><strong class="block text-sm text-neutral dark:text-gray-400">Nombre Completo:</strong> <span class="text-lg">${record.nombre}</span></div>
+                                <div><strong class="block text-sm text-neutral dark:text-gray-400">Documento:</strong> <span class="text-lg">${record.documento}</span></div>
+                                <div class="md:col-span-2"><strong class="block text-sm text-neutral dark:text-gray-400">Programa Académico:</strong> <span class="text-lg font-semibold">${record.programa}</span></div>
+                                <div><strong class="block text-sm text-neutral dark:text-gray-400">Estado:</strong> <span class="text-lg bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 font-bold px-3 py-1 rounded-full">${record.estado}</span></div>
+                                <div><strong class="block text-sm text-neutral dark:text-gray-400">Fecha de Grado:</strong> <span class="text-lg">${record.fecha_grado}</span></div>
+                                <div class="md:col-span-2"><strong class="block text-sm text-neutral dark:text-gray-400">Código de Verificación:</strong> <span class="text-lg font-mono">${record.codigo_verificacion}</span></div>
+                                <div class="md:col-span-2">
+                                    <strong class="block text-sm text-neutral dark:text-gray-400">Hash SHA-256:</strong> 
+                                    <code class="text-xs break-all bg-gray-100 dark:bg-gray-700 p-2 rounded">${record.hash}</code>
+                                </div>
+                            </div>
+                             <div class="mt-8 pt-6 border-t border-green-200 dark:border-green-800 flex flex-col md:flex-row items-center gap-6">
+                                <!-- REEMPLAZAR CON assets/qr-verificacion.png -->
+                                <img src="https://raw.githubusercontent.com/user-attachments/assets/c5f35d5e-d205-4f7f-8c34-8c887467332c/1000195289.png" alt="QR de Verificación" class="h-32 w-32 rounded-lg border p-1 bg-white">
+                                <div>
+                                    <p class="font-semibold">Escanea el código QR para acceder al registro permanente de verificación.</p>
+                                    <p class="text-sm text-neutral dark:text-gray-400">URL: <a href="https://<usuario>.github.io/utec/verificacion?code=${record.codigo_verificacion}" class="underline hover:text-primary">/verificacion?code=${record.codigo_verificacion}</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    this.verificationResultContainer.innerHTML = resultHTML;
+                    feather.replace();
+                }
+            };
+            
+            app.init();
+        });
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
